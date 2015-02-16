@@ -10,6 +10,7 @@
 #define TAG "H264Decoder"
 
 static AVCodec *codec;
+static AVCodec *codec_encode;
 static AVCodecContext *context = NULL;
 static AVFrame *picture;
 static AVPacket avpkt;
@@ -184,6 +185,16 @@ JNIEXPORT jboolean JNICALL Java_com_android_ffmpeglib_H264Decoder_init(
 
     /* register all the codecs */
     avcodec_register_all();
+
+
+/*
+	codec_encode = avcodec_find_encoder(CODEC_ID_H264);
+	if (!codec_encode) {
+		__android_log_print(ANDROID_LOG_ERROR, TAG,
+				"H264Decoder init  find encoder error %d\n", (int) codec_encode);
+		exit(1);
+	}
+*/
 	/* find the mpeg1 video decoder */
 	codec = avcodec_find_decoder(CODEC_ID_H264);
 	if (!codec) {
@@ -191,6 +202,7 @@ JNIEXPORT jboolean JNICALL Java_com_android_ffmpeglib_H264Decoder_init(
 				"H264Decoder init  find error %d\n", (int) codec);
 		exit(1);
 	}
+
 	/*init decoder context*/
 	context = avcodec_alloc_context();
 	/*malloc frame memory*/
@@ -209,7 +221,24 @@ JNIEXPORT jboolean JNICALL Java_com_android_ffmpeglib_H264Decoder_init(
 				"H264Decoder init open error %d\n", (int) codec);
 		exit(1);
 	}
-  context->flags2|=CODEC_FLAG2_CHUNKS;
+
+	/* put sample parameters */
+    context->bit_rate = 400000;
+    /* resolution must be a multiple of two */
+    context->width = iWidth;
+    context->height = iHeight;
+    /* frames per second */
+    context->time_base= (AVRational){1,25};
+    context->gop_size = 10; /* emit one intra frame every ten frames */
+    context->max_b_frames=1;
+    context->pix_fmt = PIX_FMT_YUV420P;
+    /* open it 
+    if (avcodec_open(context, codec_encode) < 0) {
+        fprintf(stderr, "could not open codec_encode\n");
+        exit(1);
+    }
+*/
+  	context->flags2|=CODEC_FLAG2_CHUNKS;
 	return 0;
 }
 
