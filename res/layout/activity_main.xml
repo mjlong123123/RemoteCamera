@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <SurfaceView
+        android:id="@+id/previewsurface"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hello_world" 
+        android:layout_centerInParent="true"/>
+
+       <!--  android:layout_below="@+id/previewsurface" -->
+    <RadioGroup
+        android:id="@+id/radiogroup"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RadioButton
+            android:id="@+id/connectbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Connect Remote Camera" />
+
+        <EditText
+            android:id="@+id/editText1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number|text" >
+
+            <requestFocus />
+        </EditText>
+
+        <RadioButton
+            android:id="@+id/openbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Open Remote Camera" />
+    </RadioGroup>
+    
+
+</RelativeLayout>
