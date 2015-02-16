@@ -250,6 +250,9 @@ public class CustomMediaRecorder {
 		mFormatReadThread.start();
 	}
 
+	
+	
+	
 	/**
 	 * @author dragon 录制视频信息
 	 */
