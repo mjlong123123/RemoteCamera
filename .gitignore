@@ -4,3 +4,4 @@
 *.a
 gen/*
 bin/*
+obj/*
