@@ -6,6 +6,7 @@
 
 #include "libavcodec/avcodec.h"
 #include "libavutil/mathematics.h"
+#include "define.h"
 
 #define TAG "H264Decoder"
 
@@ -270,9 +271,11 @@ JNIEXPORT jboolean JNICALL Java_com_android_ffmpeglib_H264Decoder_decode(
 	jbyte * Pixel= (jbyte*)(*en)->GetByteArrayElements(en, jout, 0);
     jbyte * inbuf = (* en)->GetByteArrayElements(en,jin,0);
    int arrsize = (*en)->GetArrayLength(en,jin);
-
+    if(DEBUG)
+    {
 		__android_log_print(ANDROID_LOG_ERROR, TAG,
 				"H264Decoder decode arrsize %d\n",arrsize);
+    }
 //    for(index = 0; index < arrsize; index++)
  //   {
 	//	__android_log_print(ANDROID_LOG_ERROR, TAG,
@@ -299,22 +302,25 @@ JNIEXPORT jboolean JNICALL Java_com_android_ffmpeglib_H264Decoder_decode(
 	        avpkt.data = inbuf;
 	        while (avpkt.size > 0) {
 	            len = avcodec_decode_video2(context, picture, &got_picture, &avpkt);
-              
-		__android_log_print(ANDROID_LOG_ERROR, TAG,
-				"H264Decoder decode len %d\n",len);
-    
+              if(DEBUG)
+              {
+              		__android_log_print(ANDROID_LOG_ERROR, TAG,
+              				"H264Decoder decode len %d\n",len);
+              }
 	            if (len < 0) {
 		__android_log_print(ANDROID_LOG_ERROR, TAG,
 				"H264Decoder decode error\n");
 	                exit(1);
 	            }
 	            if (got_picture) {
-		__android_log_print(ANDROID_LOG_ERROR, TAG,
-				"H264Decoder get frame data 0 %d data 1 %d data 2 %d\n",picture->data[0],picture->data[1],picture->data[2]);
-		__android_log_print(ANDROID_LOG_ERROR, TAG,
-				"H264Decoder get frame context->width %d context->height %d data 2 %d\n",context->width,context->height);
-		__android_log_print(ANDROID_LOG_ERROR, TAG,"H264Decoder get framepicture->linesize[0] %d picture->linesize[1] %d\n",picture->linesize[0],picture->linesize[1]);
-
+               if(DEBUG)
+               {
+            		__android_log_print(ANDROID_LOG_ERROR, TAG,
+            				"H264Decoder get frame data 0 %d data 1 %d data 2 %d\n",picture->data[0],picture->data[1],picture->data[2]);
+            		__android_log_print(ANDROID_LOG_ERROR, TAG,
+            				"H264Decoder get frame context->width %d context->height %d data 2 %d\n",context->width,context->height);
+            		__android_log_print(ANDROID_LOG_ERROR, TAG,"H264Decoder get framepicture->linesize[0] %d picture->linesize[1] %d\n",picture->linesize[0],picture->linesize[1]);
+               }
     		DisplayYUV_16((int*)Pixel, picture->data[0], picture->data[1], picture->data[2], context->width, context->height, picture->linesize[0], picture->linesize[1], iWidth);	
 
 	            }

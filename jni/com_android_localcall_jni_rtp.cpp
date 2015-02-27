@@ -27,6 +27,7 @@
 #include "jmutex.h"
 #include "customrtp.h"
 #include "autolock.h"
+#include "define.h"
 
 const char* const LOG_TAG = "RTP_JNI";
 //for output android log
@@ -287,15 +288,16 @@ JNIEXPORT void JNICALL Java_com_android_localcall_jni_Rtp_write___3BZ
     }
 
    lenth=env->GetArrayLength(jar);
-		buffer_in = env->GetByteArrayElements(jar, &iscopy);
-
-    LOG_LOCAL("send data lenth %d",lenth);
-    
-    for(index = 0; index < lenth && index < 10; index++)
-    {
-        LOG_LOCAL("send data buffer_in[%d] 0x%x",index,buffer_in[index]);
-    }
-
+	buffer_in = env->GetByteArrayElements(jar, &iscopy);
+	if(DEBUG)
+	{
+	    LOG_LOCAL("send data lenth %d",lenth);
+	    
+	    for(index = 0; index < lenth && index < 10; index++)
+	    {
+	        LOG_LOCAL("send data buffer_in[%d] 0x%x",index,buffer_in[index]);
+	    }
+	}
     if (lenth <= MAX_PACKAGE_SIZE)
     {
         status = seesion->SendPacket((void *)buffer_in,lenth,96,true,3600);
@@ -311,7 +313,7 @@ JNIEXPORT void JNICALL Java_com_android_localcall_jni_Rtp_write___3BZ
         int writelenth = 0;
         int left = lenth-5;
 
-		uint8_t bufferout[1500];
+		 uint8_t bufferout[1500];
 
         // Set FU-A indicator
         indicator = (uint8_t) (((tempin[4] & 0x60) & 0xFF)|0x1c); // FU indicator NRI
@@ -319,14 +321,15 @@ JNIEXPORT void JNICALL Java_com_android_localcall_jni_Rtp_write___3BZ
         header = (uint8_t) (tempin[4] & 0x1F);
         header_end = (uint8_t) ((tempin[4] & 0x1F)|0x40); 
 
-
-        LOG_LOCAL("send data large start tempin[4] 0x%x",tempin[4]);
-        LOG_LOCAL("send data large indicator:0x%x",indicator);
-        LOG_LOCAL("send data large header_start:0x%x",header_start);
-        LOG_LOCAL("send data large header:0x%x",header);
-        LOG_LOCAL("send data large header_end:0x%x",header_end);
-        LOG_LOCAL("send data large type:0x%x",tempin[4]&0x1f);
-
+		if(DEBUG)
+		{
+		        LOG_LOCAL("send data large start tempin[4] 0x%x",tempin[4]);
+		        LOG_LOCAL("send data large indicator:0x%x",indicator);
+		        LOG_LOCAL("send data large header_start:0x%x",header_start);
+		        LOG_LOCAL("send data large header:0x%x",header);
+		        LOG_LOCAL("send data large header_end:0x%x",header_end);
+		        LOG_LOCAL("send data large type:0x%x",tempin[4]&0x1f);
+		}
         while(left > 0)
         {
             uint32_t templenth;
@@ -336,21 +339,14 @@ JNIEXPORT void JNICALL Java_com_android_localcall_jni_Rtp_write___3BZ
                 templenth = left+6;
                 memcpy(bufferout,tempin,4);
                 memcpy(bufferout+6,tempin+5+sum, left);
-
-                LOG_LOCAL("send data large copy 1 start :%d",5+sum);
-                LOG_LOCAL("send data large copy 1 size :%d",left);
-
                 sum+=left;
                 left-= left;
-
             }
             else
             {
                 templenth = MAX_PACKAGE_SIZE+6;
                 memcpy(bufferout,tempin,4);
                 memcpy(bufferout+6,tempin+5+sum, MAX_PACKAGE_SIZE);
-                LOG_LOCAL("send data large copy 2 start :%d",5+sum);
-                LOG_LOCAL("send data large copy 2 size :%d",MAX_PACKAGE_SIZE);
                 sum+=MAX_PACKAGE_SIZE;
                 left-=MAX_PACKAGE_SIZE;
             }
@@ -359,31 +355,20 @@ JNIEXPORT void JNICALL Java_com_android_localcall_jni_Rtp_write___3BZ
             {
                 bufferout[4] = indicator;
                 bufferout[5] = header_start;
-                LOG_LOCAL("send data large start templenth:%d",templenth);
                 status = seesion->SendPacket((void *)bufferout,templenth,96,false,1800);
             }
             else if(left == 0)//end
             {
                 bufferout[4] = indicator;
                 bufferout[5] = header_end;
-                LOG_LOCAL("send data large end  templenth:%d",templenth);
                 status = seesion->SendPacket((void *)bufferout,templenth,96,false,1800);
             }
             else
             {
                 bufferout[4] = indicator;
                 bufferout[5] = header;
-                LOG_LOCAL("send data large center templenth:%d",templenth);
                 status = seesion->SendPacket((void *)bufferout,templenth,96,false,1800);
             }
-
-                
-				for(index = 0; index < templenth && index < 10; index++)
-				{
-					LOG_LOCAL("send data check bufferout[%d] 0x%x",index,bufferout[index]);
-				}
-
-    
         }
 	}
 	env->ReleaseByteArrayElements(jar, buffer_in, 0);

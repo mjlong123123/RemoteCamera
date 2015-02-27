@@ -101,7 +101,7 @@ public class CameraActivity extends BaseActivity implements Callback {
 		mCamera.setDisplayOrientation(90);
 		mCustomMediaRecorder = new CustomMediaRecorder(mRtp);
 		mCustomMediaRecorder.startRecorder(mCamera, mSurfaceView,
-				new VideoInfor(6000, 20, mPreviewWidth, mPreviewHeight));
+				new VideoInfor(6000, 10, mPreviewWidth, mPreviewHeight));
 		mSurfaceW = mScreenW;
 		mSurfaceH = (int) (mScreenW * (1.0f * mPreviewWidth / mPreviewHeight));
 		if (mSurfaceH > mScreenH) {

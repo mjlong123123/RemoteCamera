@@ -168,7 +168,7 @@ public class CustomMediaRecorder {
 		mMediaRecorder.setPreviewDisplay(mSurfaceView.getHolder().getSurface());
 		mMediaRecorder.setVideoSize(mVideoInfor.getW(), mVideoInfor.getH());
 		
-//		mMediaRecorder.setVideoFrameRate(mVideoInfor.getVideoFrameRate());
+		mMediaRecorder.setVideoFrameRate(mVideoInfor.getVideoFrameRate());
 //		mMediaRecorder.setVideoEncodingBitRate(4000000);
 		if (isTest) {
 			if (TESTFILE.exists())

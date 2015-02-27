@@ -115,7 +115,8 @@ public class FormatReadThread extends Thread {
 		while (!Thread.interrupted()) {
 			try {
 				int h264length = readLenth(mInputStream, lenthBuffer);
-
+				if(Utils.DEBUG)
+					Log.e(TAG, "send type:"+lenthBuffer[4]);
 				buffer = new byte[h264length + h264header.length];
 				System.arraycopy(h264header, 0, buffer, 0, h264header.length);
 				System.arraycopy(lenthBuffer, 0 + 4, buffer, h264header.length,

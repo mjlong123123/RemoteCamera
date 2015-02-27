@@ -4,7 +4,6 @@ import h264.com.VView;
 
 import java.nio.ByteBuffer;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -12,6 +11,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.DebugUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.SurfaceHolder;
@@ -102,8 +102,7 @@ public class ScreenActivity extends BaseActivity implements Callback {
 		mSurfaceView.getHolder().addCallback(this);
 		mProgressLayout = (RelativeLayout) findViewById(R.id.progressbar_process_layout);
 		mIpInput = (TextView) findViewById(R.id.input_ip);
-		String ret = UtilsExt
-				.getLocalIpAddress(ScreenActivity.this);
+		String ret = UtilsExt.getLocalIpAddress(ScreenActivity.this);
 		if (ret == null || ret.equalsIgnoreCase("")) {
 			mIpInput.setText(R.string.no_network);
 		} else {
@@ -190,12 +189,13 @@ public class ScreenActivity extends BaseActivity implements Callback {
 						}
 					});
 				} else {
-					Log.e("dragon", "dataCallback data:" + data.length);
-					Log.e("dragon", "dataCallback data[0]:" + data[0]);
-					Log.e("dragon", "dataCallback data[1]:" + data[1]);
-					Log.e("dragon", "dataCallback data[2]:" + data[2]);
-					Log.e("dragon", "dataCallback data[3]:" + data[3]);
-
+					if (Utils.DEBUG) {
+						Log.e("dragon", "dataCallback data:" + data.length);
+						Log.e("dragon", "dataCallback data[0]:" + data[0]);
+						Log.e("dragon", "dataCallback data[1]:" + data[1]);
+						Log.e("dragon", "dataCallback data[2]:" + data[2]);
+						Log.e("dragon", "dataCallback data[3]:" + data[3]);
+					}
 					if (mH264Android == null) {
 						Log.v("dragon", "dataCallback mH264Android == null");
 						return;
@@ -208,18 +208,20 @@ public class ScreenActivity extends BaseActivity implements Callback {
 						// decode nal
 						int ret = mH264Android.DecoderNal(data, data.length,
 								mPixel);
-						Log.e("dragon",
-								"frame show decode"
-										+ (System.currentTimeMillis() - time));
+						if (Utils.DEBUG) {
+							Log.e("dragon",
+									"frame show decode"
+											+ (System.currentTimeMillis() - time));
+						}
 						time = System.currentTimeMillis();
 						if (ret >= 0) {
 							mBuffer.mark();
 							mVideoBit.copyPixelsFromBuffer(mBuffer);
 							mBuffer.reset();
-
-							Log.e("dragon",
-									"frame show copy buffer "
-											+ (System.currentTimeMillis() - time));
+							if (Utils.DEBUG) {
+								Log.e("dragon", "frame show copy buffer "
+										+ (System.currentTimeMillis() - time));
+							}
 							time = System.currentTimeMillis();
 
 							Canvas can = sh.lockCanvas();
@@ -230,10 +232,11 @@ public class ScreenActivity extends BaseActivity implements Callback {
 								can.restore();
 							}
 							sh.unlockCanvasAndPost(can);
-
-							Log.e("dragon",
-									"frame show draw "
-											+ (System.currentTimeMillis() - time));
+							if (Utils.DEBUG) {
+								Log.e("dragon",
+										"frame show draw "
+												+ (System.currentTimeMillis() - time));
+							}
 							time = System.currentTimeMillis();
 						}
 					}

@@ -6,6 +6,7 @@
 #include "rtpipv4address.h"
 #include "rtperrors.h"
 #include "customrtp.h"
+#include "define.h"
 
 const char* const LOG_TAG = "RTP_SESSION";
 
@@ -49,42 +50,46 @@ void CustomRTPSession::ProcessRTPPacket(const RTPSourceData &srcdat,const RTPPac
     struct in_addr inaddr;
     bool mark = false;
     uint32_t timestamp;
-
-    if (srcdat.GetRTPDataAddress() != 0)
-    {
-        const RTPIPv4Address *addr = (const RTPIPv4Address *)(srcdat.GetRTPDataAddress());
-        ip = addr->GetIP();
-        port = addr->GetPort();
-        inaddr.s_addr = htonl(ip);
-        __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "ProcessRTPPacket ip %s", inet_ntoa(inaddr));
-        __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "ProcessRTPPacket port %d", port);
-    }
-    else if (srcdat.GetRTCPDataAddress() != 0)
-    {
-        const RTPIPv4Address *addr = (const RTPIPv4Address *)(srcdat.GetRTCPDataAddress());
-        ip = addr->GetIP();
-        port = addr->GetPort()-1;
-        inaddr.s_addr = htonl(ip);
-        __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "ProcessRTCPPacket ip %s", inet_ntoa(inaddr));
-        __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "ProcessRTCPPacket port %d", port);
-    }
-
+	if(DEBUG)
+	{
+	    if (srcdat.GetRTPDataAddress() != 0)
+	    {
+	        const RTPIPv4Address *addr = (const RTPIPv4Address *)(srcdat.GetRTPDataAddress());
+	        ip = addr->GetIP();
+	        port = addr->GetPort();
+	        inaddr.s_addr = htonl(ip);
+	        __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "ProcessRTPPacket ip %s", inet_ntoa(inaddr));
+	        __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "ProcessRTPPacket port %d", port);
+	    }
+	    else if (srcdat.GetRTCPDataAddress() != 0)
+	    {
+	        const RTPIPv4Address *addr = (const RTPIPv4Address *)(srcdat.GetRTCPDataAddress());
+	        ip = addr->GetIP();
+	        port = addr->GetPort()-1;
+	        inaddr.s_addr = htonl(ip);
+	        __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "ProcessRTCPPacket ip %s", inet_ntoa(inaddr));
+	        __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "ProcessRTCPPacket port %d", port);
+	    }
+	}
     buffer = rtppack.GetPayloadData();
     size = rtppack.GetPayloadLength();
     type = rtppack.GetPayloadType();
     Sequencenumber = rtppack.GetSequenceNumber();
     mark = rtppack.HasMarker();
     timestamp =rtppack.GetTimestamp();
+	if(DEBUG)
+	{
+	    __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "receive data type %d",type);
+	    __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "receive data size : %d",size);
+	    __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "HasMarker  %d",mark);
+	    __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "ProcessRTPPacket GetTimestamp  %d",timestamp);
+	    __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "ProcessRTPPacket GetSequenceNumber  %d",Sequencenumber);
+	    __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "ProcessRTPPacket sequence_number  %d",sequence_number);
 
-    __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "receive data type %d",type);
-    __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "receive data size : %d",size);
-    __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "HasMarker  %d",mark);
-    __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "ProcessRTPPacket GetTimestamp  %d",timestamp);
-    __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "ProcessRTPPacket GetSequenceNumber  %d",Sequencenumber);
-    __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "ProcessRTPPacket sequence_number  %d",sequence_number);
-    if(Sequencenumber != (sequence_number+1))
-        __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "ProcessRTPPacket lost packet ---------------------------------------");
-
+	    if(Sequencenumber != (sequence_number+1))
+	        __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "ProcessRTPPacket lost packet ---------------------------------------");
+	}
+	
     if(mJavaRtp != NULL)
     {
     	if(type == 101)
@@ -101,21 +106,24 @@ void CustomRTPSession::ProcessRTPPacket(const RTPSourceData &srcdat,const RTPPac
 	    }
 		else if(type == 96)
 		{
-            for(index = 0; ((index < size) && (index < 10)); index++)
-            {
-                __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "receive data[%d] 0x%x",index,buffer[index]);
-            }
-            if(mark)
-            {
-                if(((buffer[4]&0x1f) == 5))
-                __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "receive key frame ");
-            }
-            else
-            {
-                if(((buffer[5]&0x1f) == 5))
-                __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "receive key frame ");
-            }
-
+				if(DEBUG)
+				{
+	            for(index = 0; ((index < size) && (index < 10)); index++)
+	            {
+	                __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "receive data[%d] 0x%x",index,buffer[index]);
+	            }
+	            if(mark)
+	            {
+	                if(((buffer[4]&0x1f) == 5))
+	                __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "receive key frame ");
+	            }
+	            else
+	            {
+	                if(((buffer[5]&0x1f) == 5))
+	                __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "receive key frame ");
+	            }
+				}
+				
             if(size == 30)
             {
                 if(buffer[29] == 1 &&
@@ -227,61 +235,77 @@ bool CustomRTPSession::addDataToBuffer(uint8_t * in, uint32_t size, uint8_t ** p
        
     if((in[4] & 0x1f) == 0x1c)
     {
-       __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer seq:%d",seq);
-       __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer timestamp:%d",timestamp);
-       __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer tim:%d",tim);
-       
+			if(DEBUG)
+			{
+		       __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer seq:%d",seq);
+		       __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer timestamp:%d",timestamp);
+		       __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer tim:%d",tim);
+			}
         if(((in[5] & 0xe0) == 0x80))//start
         {
+				if(DEBUG)
+				{
        			__android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer data fu-a slice start");
        			__android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer data before position:%d",position);
        			__android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer data before size:%d",size);
-            //clear old data.
+				}
+				//clear old data.
             resetPlayloadBuffer();
             timestamp = tim;
             memcpy(playload_buffer,in,4);
             playload_buffer[4] = (in[4] & 0xe0) | (in[5] & 0x1f);
             memcpy(playload_buffer+5,in+6,size-6);
-            
-            for(index = 0; ((index < size-6) && (index < 10)); index++)
+            if(DEBUG)
             {
-                __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "check data[%d] 0x%x",index,playload_buffer[index]);
+	            for(index = 0; ((index < size-6) && (index < 10)); index++)
+	            {
+	                __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "check data[%d] 0x%x",index,playload_buffer[index]);
+	            }
             }
-            
             position = (size-1);
         }
         else if(((in[5] & 0xe0) == 0x40))//end
         {
+				if(DEBUG)
+				{
        			__android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer data fu-a slice end");
        			__android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer data before position:%d",position);
       				 __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer data before size:%d",size);
-       			
+				}
             {
                 memcpy(playload_buffer+position,in+6,size - 6);
-	            for(index = 0; ((index < size-6) && (index < 10)); index++)
-	            {
-	                __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "check data[%d] 0x%x",index+position,playload_buffer[index+position]);
-	            }
-            
+					if(DEBUG)
+					{
+			            for(index = 0; ((index < size-6) && (index < 10)); index++)
+			            {
+			                __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "check data[%d] 0x%x",index+position,playload_buffer[index+position]);
+			            }
+					}
                 position += (size-6);
                 *outsize = position;
                 *pOut = playload_buffer;
-                
+                if(DEBUG)
        					__android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer data size:%d",position);
                 ret = true;
             }
         }
         else
         {
-       			__android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer data fu-a slice middle");
-       			__android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer data before position:%d",position);
-       			__android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer data before size:%d",size);
-            {
+					if(DEBUG)
+					{
+	       			__android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer data fu-a slice middle");
+	       			__android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer data before position:%d",position);
+	       			__android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer data before size:%d",size);
+					}
+					{
                 memcpy(playload_buffer+position,in+6,size - 6);
-                for(index = 0; ((index < size-6) && (index < 10)); index++)
-            		{
-               		__android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "check data[%d] 0x%x",index+position,playload_buffer[index+position]);
-            		}
+					if(DEBUG)
+					{
+	                for(index = 0; ((index < size-6) && (index < 10)); index++)
+	            		{
+	               		__android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "check data[%d] 0x%x",index+position,playload_buffer[index+position]);
+	            		}
+					}
                 position += (size-6);
 
             }
@@ -291,6 +315,8 @@ bool CustomRTPSession::addDataToBuffer(uint8_t * in, uint32_t size, uint8_t ** p
 	{
        __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer data error2");
 	}
+	
+	if(DEBUG)
        __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer data after position:%d",position);
 
     return ret;
