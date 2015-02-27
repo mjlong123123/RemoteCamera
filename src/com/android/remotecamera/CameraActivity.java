@@ -82,18 +82,18 @@ public class CameraActivity extends BaseActivity implements Callback {
 			mCustomMediaRecorder = null;
 		}
 
-		CamcorderProfile cp = CamcorderProfile
-				.get(CamcorderProfile.QUALITY_QVGA);
+//		CamcorderProfile cp = CamcorderProfile
+//				.get(CamcorderProfile.QUALITY_QVGA);
 
 		mCamera = Camera.open();
 
-		List<Size> list = mCamera.getParameters().getSupportedVideoSizes();
-		Size s;
-		for (int i = 0; i < list.size(); i++) {
-			s = list.get(i);
-			Log.e(TAG, "w:" + s.width);
-			Log.e(TAG, "h:" + s.height);
-		}
+//		List<Size> list = mCamera.getParameters().getSupportedVideoSizes();
+//		Size s;
+//		for (int i = 0; i < list.size(); i++) {
+//			s = list.get(i);
+//			Log.e(TAG, "w:" + s.width);
+//			Log.e(TAG, "h:" + s.height);
+//		}
 
 		mPreviewWidth = 320;
 		mPreviewHeight = 240;
