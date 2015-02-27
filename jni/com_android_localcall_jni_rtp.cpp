@@ -51,6 +51,7 @@ static JMutex sLock;
 //declear class
 class JavaRtp;
 //declear method
+int MAX_PACKAGE_SIZE = 1000;
 
 //restore JavaRtp to java object
 void setJavaRtp(JNIEnv *env,jobject thiz,JavaRtp * jr)
@@ -173,7 +174,7 @@ JNIEXPORT jboolean JNICALL Java_com_android_localcall_jni_Rtp_openRtp
     LOG_LOCAL("openRtp portbase:%d", jrtp->getFrameSize());
 
     LOG_LOCAL("openRtp rtp max size:%d", sessparams.GetMaximumPacketSize());
-
+    MAX_PACKAGE_SIZE = sessparams.GetMaximumPacketSize()-100;
     sessparams.SetOwnTimestampUnit(1.0/20.0);
     sessparams.SetAcceptOwnPackets(false);
     sessparams.SetUsePollThread(true);
@@ -295,9 +296,9 @@ JNIEXPORT void JNICALL Java_com_android_localcall_jni_Rtp_write___3BZ
         LOG_LOCAL("send data buffer_in[%d] 0x%x",index,buffer_in[index]);
     }
 
-    if (lenth <= 1100)
+    if (lenth <= MAX_PACKAGE_SIZE)
     {
-        status = seesion->SendPacket((void *)buffer_in,lenth,96,true,1800);
+        status = seesion->SendPacket((void *)buffer_in,lenth,96,true,3600);
     }
     else
     {
@@ -330,7 +331,7 @@ JNIEXPORT void JNICALL Java_com_android_localcall_jni_Rtp_write___3BZ
         {
             uint32_t templenth;
 
-            if(left < 1000)
+            if(left < MAX_PACKAGE_SIZE)
             {
                 templenth = left+6;
                 memcpy(bufferout,tempin,4);
@@ -345,35 +346,35 @@ JNIEXPORT void JNICALL Java_com_android_localcall_jni_Rtp_write___3BZ
             }
             else
             {
-                templenth = 1006;
+                templenth = MAX_PACKAGE_SIZE+6;
                 memcpy(bufferout,tempin,4);
-                memcpy(bufferout+6,tempin+5+sum, 1000);
+                memcpy(bufferout+6,tempin+5+sum, MAX_PACKAGE_SIZE);
                 LOG_LOCAL("send data large copy 2 start :%d",5+sum);
-                LOG_LOCAL("send data large copy 2 size :%d",1000);
-                sum+=1000;
-                left-=1000;
+                LOG_LOCAL("send data large copy 2 size :%d",MAX_PACKAGE_SIZE);
+                sum+=MAX_PACKAGE_SIZE;
+                left-=MAX_PACKAGE_SIZE;
             }
 
-            if(sum == 1000)//start
+            if(sum == MAX_PACKAGE_SIZE)//start
             {
                 bufferout[4] = indicator;
                 bufferout[5] = header_start;
                 LOG_LOCAL("send data large start templenth:%d",templenth);
-                status = seesion->SendPacket((void *)bufferout,templenth,96,false,60);
+                status = seesion->SendPacket((void *)bufferout,templenth,96,false,1800);
             }
             else if(left == 0)//end
             {
                 bufferout[4] = indicator;
                 bufferout[5] = header_end;
                 LOG_LOCAL("send data large end  templenth:%d",templenth);
-                status = seesion->SendPacket((void *)bufferout,templenth,96,false,60);
+                status = seesion->SendPacket((void *)bufferout,templenth,96,false,1800);
             }
             else
             {
                 bufferout[4] = indicator;
                 bufferout[5] = header;
                 LOG_LOCAL("send data large center templenth:%d",templenth);
-                status = seesion->SendPacket((void *)bufferout,templenth,96,false,60);
+                status = seesion->SendPacket((void *)bufferout,templenth,96,false,1800);
             }
 
                 
