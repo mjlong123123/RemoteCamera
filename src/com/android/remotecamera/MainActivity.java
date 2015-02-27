@@ -35,7 +35,8 @@ import com.android.localcall.jni.Rtp.IDataCallback;
 import com.android.remotecamera.CustomMediaRecorder.VideoInfor;
 import com.example.remotecamera.R;
 
-public class MainActivity extends Activity implements Callback, PreviewCallback {
+public class MainActivity extends BaseActivity implements Callback,
+		PreviewCallback {
 
 	byte[] mRGBbuffer = null;
 	ByteBuffer mByteBuffer = null;
@@ -137,7 +138,7 @@ public class MainActivity extends Activity implements Callback, PreviewCallback 
 						if (mResizeSurface) {
 							mSurfaceW = mScreenW;
 							mSurfaceH = (int) (mScreenW * (1.0f * mPreviewHeight / mPreviewWidth));
-							if(mSurfaceH > mScreenH){
+							if (mSurfaceH > mScreenH) {
 								mSurfaceW = (int) (mScreenH * (1.0f * mPreviewWidth / mPreviewHeight));
 								mSurfaceH = mScreenH;
 							}
@@ -147,7 +148,8 @@ public class MainActivity extends Activity implements Callback, PreviewCallback 
 										@Override
 										public void run() {
 
-											mSurfaceHolder.setFixedSize(mSurfaceW,mSurfaceH);
+											mSurfaceHolder.setFixedSize(
+													mSurfaceW, mSurfaceH);
 										}
 
 									});
@@ -174,7 +176,8 @@ public class MainActivity extends Activity implements Callback, PreviewCallback 
 							Canvas can = sh.lockCanvas();
 							if (can != null) {
 								can.save();
-								can.drawBitmap(mVideoBit, null, new Rect(0, 0, mSurfaceW, mSurfaceH), null);
+								can.drawBitmap(mVideoBit, null, new Rect(0, 0,
+										mSurfaceW, mSurfaceH), null);
 								can.restore();
 							}
 							sh.unlockCanvasAndPost(can);
@@ -274,7 +277,7 @@ public class MainActivity extends Activity implements Callback, PreviewCallback 
 		List<Size> list = para.getSupportedVideoSizes();
 		Size size;
 		int lenth = list.size();
-		for (int i = 0; i < lenth-4; i++) {
+		for (int i = 0; i < lenth - 4; i++) {
 			size = list.get(i);
 			mPreviewWidth = size.width;
 			mPreviewHeight = size.height;
@@ -294,8 +297,7 @@ public class MainActivity extends Activity implements Callback, PreviewCallback 
 		mCamera.startPreview();
 		mSurfaceW = mScreenW;
 		mSurfaceH = (int) (mScreenW * (1.0f * mPreviewWidth / mPreviewHeight));
-		if(mSurfaceH>mScreenH)
-		{
+		if (mSurfaceH > mScreenH) {
 			mSurfaceW = (int) (mScreenH * (1.0f * mPreviewHeight / mPreviewWidth));
 			mSurfaceH = mScreenH;
 		}

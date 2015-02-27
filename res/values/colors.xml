@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="button_color_selected1">#C2C2C2</color>
+    <color name="button_color1">#C1CDCD</color>
+    <color name="button_color_selected2">#FFC1C1</color>
+    <color name="button_color2">#FFDEAD</color>
+
+</resources>

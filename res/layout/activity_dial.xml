@@ -1,0 +1,210 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#FFF0F5" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/editLayout1"
+        android:layout_marginBottom="15dp"
+        android:gravity="center_horizontal"
+        android:text="@string/input_ip"
+        android:textColor="#cccc33"
+        android:textSize="20sp" />
+
+    <RelativeLayout
+        android:id="@+id/editLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tableLayout1" 
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="15dip">
+
+        <EditText
+            android:id="@+id/editText1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:layout_toLeftOf="@+id/buttondel"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:hint="192.168.1.1"
+            android:inputType="numberDecimal"
+            android:textSize="20sp" >
+        </EditText>
+
+        <Button
+            android:id="@+id/buttondel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/editText1"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/editText1"
+            android:text="@string/del_input"
+            android:textColor="#FF0000" 
+            android:paddingLeft="20dip"
+            android:paddingRight="20dip"/>
+    </RelativeLayout>
+
+    <TableLayout
+        android:id="@+id/tableLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buttonc"
+        android:layout_centerInParent="true" >
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/button1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/dial_padding_bottom"
+                android:paddingLeft="@dimen/dial_padding_left"
+                android:paddingRight="@dimen/dial_padding_right"
+                android:paddingTop="@dimen/dial_padding_top"
+                android:text="1"
+                android:textSize="@dimen/dial_font_size" />
+
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/dial_padding_bottom"
+                android:paddingLeft="@dimen/dial_padding_left"
+                android:paddingRight="@dimen/dial_padding_right"
+                android:paddingTop="@dimen/dial_padding_top"
+                android:text="2"
+                android:textSize="@dimen/dial_font_size" />
+
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/dial_padding_bottom"
+                android:paddingLeft="@dimen/dial_padding_left"
+                android:paddingRight="@dimen/dial_padding_right"
+                android:paddingTop="@dimen/dial_padding_top"
+                android:text="3"
+                android:textSize="@dimen/dial_font_size" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/button4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/dial_padding_bottom"
+                android:paddingTop="@dimen/dial_padding_top"
+                android:text="4"
+                android:textSize="@dimen/dial_font_size" />
+
+            <Button
+                android:id="@+id/button5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/dial_padding_bottom"
+                android:paddingTop="@dimen/dial_padding_top"
+                android:text="5"
+                android:textSize="@dimen/dial_font_size" />
+
+            <Button
+                android:id="@+id/button6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/dial_padding_bottom"
+                android:paddingTop="@dimen/dial_padding_top"
+                android:text="6"
+                android:textSize="@dimen/dial_font_size" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/button7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/dial_padding_bottom"
+                android:paddingTop="@dimen/dial_padding_top"
+                android:text="7"
+                android:textSize="@dimen/dial_font_size" />
+
+            <Button
+                android:id="@+id/button8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/dial_padding_bottom"
+                android:paddingTop="@dimen/dial_padding_top"
+                android:text="8"
+                android:textSize="@dimen/dial_font_size" />
+
+            <Button
+                android:id="@+id/button9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/dial_padding_bottom"
+                android:paddingTop="@dimen/dial_padding_top"
+                android:text="9"
+                android:textSize="@dimen/dial_font_size" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/buttonp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/dial_padding_bottom"
+                android:paddingTop="@dimen/dial_padding_top"
+                android:text="."
+                android:textSize="@dimen/dial_font_size" />
+
+            <Button
+                android:id="@+id/button0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/dial_padding_bottom"
+                android:paddingTop="@dimen/dial_padding_top"
+                android:text="0"
+                android:textSize="@dimen/dial_font_size" />
+
+            <Button
+                android:id="@+id/buttond"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/dial_padding_bottom"
+                android:paddingTop="@dimen/dial_padding_top"
+                android:text="."
+                android:textSize="@dimen/dial_font_size" />
+        </TableRow>
+    </TableLayout>
+
+    <Button
+        android:id="@+id/buttonc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dp"
+        android:paddingBottom="@dimen/dial_padding_bottom"
+        android:paddingLeft="@dimen/dial_padding_left"
+        android:paddingRight="@dimen/dial_padding_right"
+        android:paddingTop="@dimen/dial_padding_top"
+        android:text="@string/connect"
+        android:textSize="@dimen/dial_font_size" />
+
+</RelativeLayout>

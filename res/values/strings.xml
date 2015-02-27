@@ -2,7 +2,16 @@
 <resources>
 
     <string name="app_name">RemoteCamera</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="button_open_camera">Open Camera</string>
+    <string name="button_open_screen">Open Screen</string>
+    <string name="toast_no_data">No Data</string>
+    <string name="no_network">No Network</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="dialog_title_input_ip">"Please input remote screen ip"</string>
+    <string name="input_ip">"Please input remote screen ip"</string>
+    <string name="del_input">"DEL"</string>
+    <string name="connect">"Connect"</string>
+    <string name="ip_error">"Ip Error"</string>
 
 </resources>

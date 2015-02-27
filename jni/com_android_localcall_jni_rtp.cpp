@@ -172,6 +172,8 @@ JNIEXPORT jboolean JNICALL Java_com_android_localcall_jni_Rtp_openRtp
     LOG_LOCAL("openRtp FrameSize:%d", framesize);
     LOG_LOCAL("openRtp portbase:%d", jrtp->getFrameSize());
 
+    LOG_LOCAL("openRtp rtp max size:%d", sessparams.GetMaximumPacketSize());
+
     sessparams.SetOwnTimestampUnit(1.0/20.0);
     sessparams.SetAcceptOwnPackets(false);
     sessparams.SetUsePollThread(true);

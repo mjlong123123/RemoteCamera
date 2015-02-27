@@ -1,4 +1,5 @@
 package com.android.remotecamera;
+
 import h264.com.VView;
 
 import java.nio.ByteBuffer;
@@ -12,19 +13,21 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
-import android.view.Display;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.localcall.jni.Rtp;
 import com.android.localcall.jni.Rtp.IDataCallback;
+import com.android.remotecamera.util.UtilsExt;
 import com.example.remotecamera.R;
 
-public class ScreenActivity extends Activity implements Callback {
+public class ScreenActivity extends BaseActivity implements Callback {
 	private final static String TAG = "ScreenActivity";
 	private SurfaceView mSurfaceView;
 	// 传输数据
@@ -40,29 +43,38 @@ public class ScreenActivity extends Activity implements Callback {
 	private Bitmap mVideoBit = null;
 
 	private SurfaceHolder mSurfaceHolder = null;
-	
-	private ProgressBar mProgressBar;
+
+	private RelativeLayout mProgressLayout;
+	private TextView mIpInput;
 
 	private int mScreenW = 0;
 	private int mScreenH = 0;
 	private int mSurfaceW = 0;
 	private int mSurfaceH = 0;
-	
-	
+
 	private final static int SHOW_PROCESS = 100;
 	private final static int DISMISS_ROCESS = 101;
-	private Handler mHandler = new Handler(){
+	private Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
-			switch(msg.what)
-			{
+			switch (msg.what) {
 			case SHOW_PROCESS:
-				if(mProgressBar != null)
-					mProgressBar.setVisibility(View.VISIBLE);
-				Toast.makeText(ScreenActivity.this, "没有接收到数据", Toast.LENGTH_LONG);
+				if (mProgressLayout != null) {
+					mProgressLayout.setVisibility(View.VISIBLE);
+
+					String ret = UtilsExt
+							.getLocalIpAddress(ScreenActivity.this);
+					if (ret == null || ret.equalsIgnoreCase("")) {
+						mIpInput.setText(R.string.no_network);
+					} else {
+						mIpInput.setText(ret);
+					}
+				}
+				Toast.makeText(ScreenActivity.this, R.string.toast_no_data,
+						Toast.LENGTH_LONG);
 				break;
 			case DISMISS_ROCESS:
-				if(mProgressBar != null)
-					mProgressBar.setVisibility(View.GONE);
+				if (mProgressLayout != null)
+					mProgressLayout.setVisibility(View.GONE);
 				break;
 			}
 		};
@@ -78,13 +90,26 @@ public class ScreenActivity extends Activity implements Callback {
 	@Override
 	protected void onDestroy() {
 
+		if (mH264Android != null) {
+			mH264Android.UninitDecoder();
+			mH264Android = null;
+		}
 		super.onDestroy();
 	}
 
 	private void initView() {
 		mSurfaceView = (SurfaceView) findViewById(R.id.surfaceview);
 		mSurfaceView.getHolder().addCallback(this);
-		mProgressBar = (ProgressBar)findViewById(R.id.progressbar_process);
+		mProgressLayout = (RelativeLayout) findViewById(R.id.progressbar_process_layout);
+		mIpInput = (TextView) findViewById(R.id.input_ip);
+		String ret = UtilsExt
+				.getLocalIpAddress(ScreenActivity.this);
+		if (ret == null || ret.equalsIgnoreCase("")) {
+			mIpInput.setText(R.string.no_network);
+		} else {
+			mIpInput.setText(ret);
+		}
+
 		Display display = getWindowManager().getDefaultDisplay();
 		mScreenW = display.getWidth();
 		mScreenH = display.getHeight();
@@ -106,16 +131,17 @@ public class ScreenActivity extends Activity implements Callback {
 
 			@Override
 			public void dataCallback(byte[] data, int size) {
-				if(data.length == 35 && data[0]==35 && data[34]==35)
-				{
+				if (data.length == 35 && data[0] == 35 && data[34] == 35) {
 					Log.e(TAG, "data bybe");
 					mHandler.sendEmptyMessage(SHOW_PROCESS);
-					
-//					ScreenActivity.this.finish();
+
+					// ScreenActivity.this.finish();
 					return;
 				}
 
-				if (data.length == 30 && data[29] == 1&& data[28] == 0&& data[27] == 1&& data[26] == 0&& data[25] == 1&& data[24] == 0) {
+				if (data.length == 30 && data[29] == 1 && data[28] == 0
+						&& data[27] == 1 && data[26] == 0 && data[25] == 1
+						&& data[24] == 0) {
 					int w = (data[0] & 0xff) | ((data[1] & 0xff) << 8)
 							| ((data[2] & 0xff) << 16)
 							| ((data[3] & 0xff) << 24);
@@ -151,19 +177,18 @@ public class ScreenActivity extends Activity implements Callback {
 
 					mSurfaceW = mScreenW;
 					mSurfaceH = (int) (mScreenW * (1.0f * mFrameHeight / mFrameWidth));
-					if(mSurfaceH > mScreenH){
+					if (mSurfaceH > mScreenH) {
 						mSurfaceW = (int) (mScreenH * (1.0f * mFrameWidth / mFrameHeight));
 						mSurfaceH = mScreenH;
 					}
-					new Handler(Looper.getMainLooper())
-							.post(new Runnable() {
+					new Handler(Looper.getMainLooper()).post(new Runnable() {
 
-								@Override
-								public void run() {
+						@Override
+						public void run() {
 
-									mSurfaceHolder.setFixedSize(mSurfaceW,mSurfaceH);
-								}
-							});
+							mSurfaceHolder.setFixedSize(mSurfaceW, mSurfaceH);
+						}
+					});
 				} else {
 					Log.e("dragon", "dataCallback data:" + data.length);
 					Log.e("dragon", "dataCallback data[0]:" + data[0]);

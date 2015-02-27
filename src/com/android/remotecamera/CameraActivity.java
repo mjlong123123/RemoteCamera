@@ -2,7 +2,6 @@ package com.android.remotecamera;
 
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
@@ -18,7 +17,7 @@ import com.android.localcall.jni.Rtp;
 import com.android.remotecamera.CustomMediaRecorder.VideoInfor;
 import com.example.remotecamera.R;
 
-public class CameraActivity extends Activity implements Callback {
+public class CameraActivity extends BaseActivity implements Callback {
 	private final static String TAG = "CameraActivity";
 	private int mPreviewWidth = 0;
 	private int mPreviewHeight = 0;
@@ -82,22 +81,23 @@ public class CameraActivity extends Activity implements Callback {
 			mCustomMediaRecorder.stopRecorder();
 			mCustomMediaRecorder = null;
 		}
-		
-		CamcorderProfile cp = CamcorderProfile.get(CamcorderProfile.QUALITY_QVGA);
-		
+
+		CamcorderProfile cp = CamcorderProfile
+				.get(CamcorderProfile.QUALITY_QVGA);
+
 		mCamera = Camera.open();
-		
+
 		List<Size> list = mCamera.getParameters().getSupportedVideoSizes();
 		Size s;
 		for (int i = 0; i < list.size(); i++) {
 			s = list.get(i);
-			Log.e(TAG, "w:"+s.width);
-			Log.e(TAG, "h:"+s.height);
+			Log.e(TAG, "w:" + s.width);
+			Log.e(TAG, "h:" + s.height);
 		}
 
 		mPreviewWidth = 320;
 		mPreviewHeight = 240;
-		
+
 		mCamera.setDisplayOrientation(90);
 		mCustomMediaRecorder = new CustomMediaRecorder(mRtp);
 		mCustomMediaRecorder.startRecorder(mCamera, mSurfaceView,

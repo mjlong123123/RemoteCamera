@@ -4,4 +4,9 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <dimen name="dial_font_size">30sp</dimen>
+    <dimen name="dial_padding_left">30dip</dimen>
+    <dimen name="dial_padding_right">30dip</dimen>
+    <dimen name="dial_padding_top">10dip</dimen>
+    <dimen name="dial_padding_bottom">10dip</dimen>
 </resources>
