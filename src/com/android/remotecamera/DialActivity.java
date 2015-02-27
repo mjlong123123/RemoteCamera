@@ -1,6 +1,7 @@
 package com.android.remotecamera;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -89,6 +90,9 @@ public class DialActivity extends BaseActivity implements OnClickListener {
 		mButtond.setOnClickListener(this);
 		mButtonCall.setOnClickListener(this);
 		buttondel.setOnClickListener(this);
+		
+		mEditor.setText(restoreIp());
+		mTextBuffer.append(restoreIp());
 	}
 
 	@Override
@@ -151,6 +155,7 @@ public class DialActivity extends BaseActivity implements OnClickListener {
 				Toast.makeText(DialActivity.this, R.string.ip_error,
 						Toast.LENGTH_SHORT).show();
 			} else {
+				saveIp(ret);
 				Intent intent = new Intent();
 				intent.setClass(DialActivity.this, CameraActivity.class);
 				intent.putExtra("IP", mIp);
@@ -162,4 +167,17 @@ public class DialActivity extends BaseActivity implements OnClickListener {
 		mEditor.setText(mTextBuffer.toString());
 	}
 
+	private void saveIp(String ip) {
+		SharedPreferences sp = getSharedPreferences("ip_editor", MODE_PRIVATE);
+		SharedPreferences.Editor editor = sp.edit();
+		editor.putString("ip", ip);
+		editor.commit();
+	}
+
+	private String restoreIp() {
+		String ret = "";
+		SharedPreferences sp = getSharedPreferences("ip_editor", MODE_PRIVATE);
+		ret = sp.getString("ip", "192.168.1.1");
+		return ret;
+	}
 }
