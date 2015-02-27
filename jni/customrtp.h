@@ -20,7 +20,7 @@ public:
 	inline void setPortBase(uint16_t in){mPortBase = in;};
 private:
     JavaVM * mJavaVM;
-	JNIEnv* mEnv;
+	
     jclass      mClass;     // Reference to Rtp class
     jobject     mObject;    // Weak ref to Rtp Java object to call on
     CustomRTPSession * mMyRTPSession;//for rtp transport

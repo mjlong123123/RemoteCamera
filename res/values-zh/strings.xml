@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">远程摄像机</string>
-
+    <string name="app_name">远程摄像</string>
+    <string name="button_open_camera">打开摄像</string>
+    <string name="button_open_screen">打开显示器</string>
+    <string name="toast_no_data">没有数据</string>
+    <string name="no_network">没有网络</string>
+    <string name="ok">确定</string>
+    <string name="cancel">取消</string>
+    <string name="dialog_title_input_ip">请输入远程显示器ip</string>
+    <string name="input_ip">请输入远程显示器ip</string>
+    <string name="del_input">删除</string>
+    <string name="connect">连接</string>
+    <string name="ip_error">ip错误</string>
 </resources>

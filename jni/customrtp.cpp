@@ -116,6 +116,7 @@ JavaRtp::~JavaRtp()
 }
 void JavaRtp::callJavaCallBack(int returncode, short * buffer, int size)
 {
+	JNIEnv* mEnv;
     jshortArray bufret;
     LOG_LOCAL("JavaRtp::callJavaCallBack() start");
 
@@ -137,8 +138,12 @@ void JavaRtp::callJavaCallBack(int returncode, short * buffer, int size)
 }
 void JavaRtp::callJavaCallBack(int returncode, char * buffer, int size)
 {
+	JNIEnv* mEnv;
     jbyteArray bufret;
-    mJavaVM->AttachCurrentThread(&mEnv, NULL);
+		jint ret=0;
+        LOG_LOCAL("JavaRtp::callJavaCallBack() start 1");
+   ret = mJavaVM->AttachCurrentThread(&mEnv, NULL);
+        LOG_LOCAL("JavaRtp::callJavaCallBack() start 2 %d",ret);
 
     if(mEnv == NULL)
     {
@@ -146,8 +151,11 @@ void JavaRtp::callJavaCallBack(int returncode, char * buffer, int size)
         return;
     }
 
+        LOG_LOCAL("JavaRtp::callJavaCallBack() start");
     bufret = mEnv->NewByteArray(size);
-
+	
+        LOG_LOCAL("JavaRtp::callJavaCallBack() start %x  size %d",bufret,size);
+				
     mEnv->SetByteArrayRegion(bufret, 0, size, (const jbyte * )buffer);
 
     mEnv->CallStaticVoidMethod(mClass,mCallback1,bufret,size);
