@@ -196,7 +196,6 @@
         android:id="@+id/buttonc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="10dip"
         android:layout_marginTop="10dp"
@@ -205,6 +204,13 @@
         android:paddingRight="@dimen/dial_padding_right"
         android:paddingTop="@dimen/dial_padding_top"
         android:text="@string/connect"
-        android:textSize="@dimen/dial_font_size" />
+        android:textSize="@dimen/dial_font_size" 
+        android:layout_above="@+id/ad_linearlayout"/>
 
+    <LinearLayout
+        android:id="@+id/ad_linearlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ffffff" 
+        android:layout_alignParentBottom="true"/>
 </RelativeLayout>

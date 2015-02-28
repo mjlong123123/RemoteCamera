@@ -1,17 +1,17 @@
 package com.android.remotecamera;
 
-import java.util.List;
-
+import net.youmi.android.banner.AdSize;
+import net.youmi.android.banner.AdView;
+import net.youmi.android.banner.AdViewListener;
 import android.content.Intent;
 import android.hardware.Camera;
-import android.hardware.Camera.Size;
-import android.media.CamcorderProfile;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
+import android.widget.LinearLayout;
 
 import com.android.localcall.jni.Rtp;
 import com.android.remotecamera.CustomMediaRecorder.VideoInfor;
@@ -33,6 +33,8 @@ public class CameraActivity extends BaseActivity implements Callback {
 
 	private Camera mCamera = null;
 
+	private LinearLayout mLinearLayoutAd;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.camera_activity_layout);
@@ -67,6 +69,29 @@ public class CameraActivity extends BaseActivity implements Callback {
 		Display display = getWindowManager().getDefaultDisplay();
 		mScreenW = display.getWidth();
 		mScreenH = display.getHeight();
+		
+		mLinearLayoutAd = (LinearLayout) findViewById(R.id.ad_linearlayout);
+		
+		AdView adView = new AdView(this, AdSize.FIT_SCREEN);
+		mLinearLayoutAd.addView(adView);
+		adView.setAdListener(new AdViewListener() {
+
+			@Override
+			public void onSwitchedAd(AdView arg0) {
+				Log.i("YoumiAdDemo", "广告条切换");
+			}
+
+			@Override
+			public void onReceivedAd(AdView arg0) {
+				Log.i("YoumiAdDemo", "请求广告成功");
+
+			}
+
+			@Override
+			public void onFailedToReceivedAd(AdView arg0) {
+				Log.i("YoumiAdDemo", "请求广告失败");
+			}
+		});
 	}
 
 	@Override

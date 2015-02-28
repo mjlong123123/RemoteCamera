@@ -1,12 +1,17 @@
 package com.android.remotecamera;
 
+import net.youmi.android.banner.AdSize;
+import net.youmi.android.banner.AdView;
+import net.youmi.android.banner.AdViewListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.remotecamera.util.UtilsExt;
@@ -37,6 +42,8 @@ public class DialActivity extends BaseActivity implements OnClickListener {
 	private String mIp = "";
 	private int mPort = 0;
 
+	private LinearLayout mLinearLayoutAd;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.activity_dial);
@@ -93,6 +100,28 @@ public class DialActivity extends BaseActivity implements OnClickListener {
 		
 		mEditor.setText(restoreIp());
 		mTextBuffer.append(restoreIp());
+		mLinearLayoutAd = (LinearLayout) findViewById(R.id.ad_linearlayout);
+		
+		AdView adView = new AdView(this, AdSize.FIT_SCREEN);
+		mLinearLayoutAd.addView(adView);
+		adView.setAdListener(new AdViewListener() {
+
+			@Override
+			public void onSwitchedAd(AdView arg0) {
+				Log.i("YoumiAdDemo", "广告条切换");
+			}
+
+			@Override
+			public void onReceivedAd(AdView arg0) {
+				Log.i("YoumiAdDemo", "请求广告成功");
+
+			}
+
+			@Override
+			public void onFailedToReceivedAd(AdView arg0) {
+				Log.i("YoumiAdDemo", "请求广告失败");
+			}
+		});
 	}
 
 	@Override
