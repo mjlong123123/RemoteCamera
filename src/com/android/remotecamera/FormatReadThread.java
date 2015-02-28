@@ -134,6 +134,11 @@ public class FormatReadThread extends Thread {
 		bybebuffer[0] = 35;
 		bybebuffer[34] = 35;
 		mRtp.write(bybebuffer);
+		try {
+			mInputStream.close();
+		} catch (IOException e) {
+			Log.e(TAG, "e");
+		}
 	}
 
 	/**
