@@ -344,7 +344,7 @@ int RTPSession::InternalCreate(const RTPSessionParams &sessparams)
 			}
 		}
 		
-		pollthread = RTPNew(GetMemoryManager(),RTPMEM_TYPE_CLASS_RTPPOLLTHREAD) RTPPollThread(*this,rtcpsched);
+		pollthread = RTPNew(GetMemoryManager(),RTPMEM_TYPE_CLASS_RTPPOLLTHREAD) RTPPollThread(*this,rtcpsched,sessparams.GetJavaVM());
 		if (pollthread == 0)
 		{
 			if (deletetransmitter)

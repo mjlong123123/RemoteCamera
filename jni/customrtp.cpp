@@ -21,7 +21,7 @@ JavaRtp::JavaRtp(JNIEnv* env, jobject & thiz, jobject & weak_ref,jmethodID callb
     mIsOpen = false;
     mFrameSize = 0;
     mPortBase = 0;
-
+    mEnv = NULL;
     if(env == NULL || thiz == NULL || weak_ref == NULL)
     {
         LOG_LOCAL("JavaRtp::JavaRtp() env == NULL error");
@@ -116,7 +116,6 @@ JavaRtp::~JavaRtp()
 }
 void JavaRtp::callJavaCallBack(int returncode, short * buffer, int size)
 {
-	JNIEnv* mEnv;
     jshortArray bufret;
     LOG_LOCAL("JavaRtp::callJavaCallBack() start");
 
@@ -138,17 +137,21 @@ void JavaRtp::callJavaCallBack(int returncode, short * buffer, int size)
 }
 void JavaRtp::callJavaCallBack(int returncode, char * buffer, int size)
 {
-	JNIEnv* mEnv;
     jbyteArray bufret;
 		jint ret=0;
         LOG_LOCAL("JavaRtp::callJavaCallBack() start 1");
-   ret = mJavaVM->AttachCurrentThread(&mEnv, NULL);
-        LOG_LOCAL("JavaRtp::callJavaCallBack() start 2 %d",ret);
-
+        //ret = mJavaVM->AttachCurrentThread(&mEnv, NULL);
+        LOG_LOCAL("JavaRtp::callJavaCallBack() start 2 %x",mJavaVM);
+    
     if(mEnv == NULL)
     {
         LOG_LOCAL("JavaRtp::callJavaCallBack() mEnv is null 3");
-        return;
+         if (mJavaVM->GetEnv((void**) &mEnv, JNI_VERSION_1_4) != JNI_OK)
+        {
+            LOG_LOCAL("JavaRtp::callJavaCallBack() mJavaVM->GetEnv error");
+            jniThrowExceptionExt(mEnv, "java/lang/RuntimeException", "JavaRtp::callJavaCallBack get env error");
+        }
+        // return;
     }
 
         LOG_LOCAL("JavaRtp::callJavaCallBack() start");
@@ -159,8 +162,9 @@ void JavaRtp::callJavaCallBack(int returncode, char * buffer, int size)
     mEnv->SetByteArrayRegion(bufret, 0, size, (const jbyte * )buffer);
 
     mEnv->CallStaticVoidMethod(mClass,mCallback1,bufret,size);
-	
-    mJavaVM->DetachCurrentThread();
+	// mEnv->ReleaseByteArrayElements(bufret, (jbyte *)buffer, 0);
+    mEnv->DeleteLocalRef(bufret);
+    //mJavaVM->DetachCurrentThread();
 
 }
 

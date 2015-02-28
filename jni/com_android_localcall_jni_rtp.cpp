@@ -176,6 +176,7 @@ JNIEXPORT jboolean JNICALL Java_com_android_localcall_jni_Rtp_openRtp
 
     LOG_LOCAL("openRtp rtp max size:%d", sessparams.GetMaximumPacketSize());
     MAX_PACKAGE_SIZE = sessparams.GetMaximumPacketSize()-100;
+    sessparams.SetJavaVM(jrtp->getJavaVM());
     sessparams.SetOwnTimestampUnit(1.0/20.0);
     sessparams.SetAcceptOwnPackets(false);
     sessparams.SetUsePollThread(true);

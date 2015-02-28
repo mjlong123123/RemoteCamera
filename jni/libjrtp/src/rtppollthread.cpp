@@ -46,13 +46,25 @@
 
 #include "rtpdebug.h"
 
-RTPPollThread::RTPPollThread(RTPSession &session,RTCPScheduler &sched):rtpsession(session),rtcpsched(sched)
+
+RTPPollThread::RTPPollThread(RTPSession &session,RTCPScheduler &sched,
+    JavaVM * jvm):rtpsession(session),rtcpsched(sched)
 {
 	stop = false;
 	transmitter = 0;
 #if (defined(WIN32) || defined(_WIN32_WCE))
 	timeinit.Dummy();
 #endif // WIN32 || _WIN32_WCE
+
+    mJavaVM = jvm;
+    if(mJavaVM)
+    {
+        LOG_LOCAL("RTPPollThread::RTPPollThread() mJavaVM success");
+    }
+    else
+    {
+        LOG_LOCAL("RTPPollThread::RTPPollThread() mJavaVM == NULL error");
+    }
 }
 
 RTPPollThread::~RTPPollThread()
@@ -114,13 +126,19 @@ void RTPPollThread::Stop()
 
 void *RTPPollThread::Thread()
 {
-	JThread::ThreadStarted();
-	
-	bool stopthread;
 
+	JThread::ThreadStarted();
+	JNIEnv* mEnv;
+	bool stopthread;
+	if(!mJavaVM)
+        LOG_LOCAL("RTPPollThread::Thread() mJavaVM error");
+    mJavaVM->AttachCurrentThread(&mEnv, NULL);
+	if(!mEnv)
+        LOG_LOCAL("RTPPollThread::Thread() mEnv error");
 	stopmutex.Lock();
 	stopthread = stop;
 	stopmutex.Unlock();
+
 	while (!stopthread)
 	{
 		int status;
@@ -161,6 +179,11 @@ void *RTPPollThread::Thread()
 				}
 			}
 		}
+	}
+	if(mJavaVM)
+	{
+        LOG_LOCAL("RTPPollThread::Thread() vm detach");
+		mJavaVM->DetachCurrentThread();
 	}
 	return 0;
 }

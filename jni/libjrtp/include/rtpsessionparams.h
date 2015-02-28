@@ -44,6 +44,8 @@
 #include "rtptimeutilities.h"
 #include "rtpsources.h"
 
+#include <jni.h>
+
 /** Describes the parameters for to be used by an RTPSession instance. 
  *  Describes the parameters for to be used by an RTPSession instance. Note that the own timestamp 
  *  unit must be set to a valid number, otherwise the session can't be created.
@@ -190,6 +192,11 @@ public:
 
 	/** Returns the multiplier to be used when timing out SDES NOTE information (default is 25). */
 	double GetNoteTimeoutMultiplier() const					{ return notemultiplier; }
+
+
+	void SetJavaVM(JavaVM *  m)					{ mJavaVM = m; }
+
+	JavaVM * GetJavaVM() const					{ return mJavaVM; }
 private:
 	bool acceptown;
 	bool usepollthread;
@@ -214,6 +221,8 @@ private:
 	double byetimeoutmultiplier;
 	double collisionmultiplier;
 	double notemultiplier;
+
+    JavaVM * mJavaVM;
 };
 
 #endif // RTPSESSIONPARAMS_H

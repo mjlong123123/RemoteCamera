@@ -47,6 +47,14 @@
 #include <../../libjthread/include/jthread.h>
 #include <../../libjthread/include/jmutex.h>
 #include <list>
+#include <jni.h>
+
+#include <android/log.h>
+
+
+const char* const LOG_TAG = "RTPPollThread";
+
+#define LOG_LOCAL(...)   __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__);
 
 class RTPSession;
 class RTCPScheduler;
@@ -54,7 +62,7 @@ class RTCPScheduler;
 class RTPPollThread : private JThread
 {
 public:
-	RTPPollThread(RTPSession &session,RTCPScheduler &rtcpsched);
+	RTPPollThread(RTPSession &session,RTCPScheduler &rtcpsched,JavaVM * jvm);
 	~RTPPollThread();
 	int Start(RTPTransmitter *trans);
 	void Stop();
@@ -67,6 +75,10 @@ private:
 	
 	RTPSession &rtpsession;
 	RTCPScheduler &rtcpsched;
+
+  JavaVM * mJavaVM;
+
+  JNIEnv* mEnv;
 };
 
 #endif // RTP_SUPPORT_THREAD
