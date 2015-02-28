@@ -119,7 +119,7 @@ void JavaRtp::callJavaCallBack(int returncode, short * buffer, int size)
     jshortArray bufret;
     LOG_LOCAL("JavaRtp::callJavaCallBack() start");
 
-    mJavaVM->AttachCurrentThread(&mEnv, NULL);
+    // mJavaVM->AttachCurrentThread(&mEnv, NULL);
     if(mEnv == NULL)
     {
         LOG_LOCAL("JavaRtp::callJavaCallBack() mEnv is null");
@@ -133,7 +133,7 @@ void JavaRtp::callJavaCallBack(int returncode, short * buffer, int size)
 
     mEnv->CallStaticVoidMethod(mClass,mCallback,bufret,mSpeexRtp->getFrameSize());
     LOG_LOCAL("JavaRtp::callJavaCallBack() start 7");
-    mJavaVM->DetachCurrentThread();
+    // mJavaVM->DetachCurrentThread();
 }
 void JavaRtp::callJavaCallBack(int returncode, char * buffer, int size)
 {

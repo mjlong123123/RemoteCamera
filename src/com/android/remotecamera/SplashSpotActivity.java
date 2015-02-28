@@ -1,17 +1,10 @@
 package com.android.remotecamera;
 
 import net.youmi.android.AdManager;
-import net.youmi.android.spot.SplashView;
-import net.youmi.android.spot.SpotDialogListener;
 import net.youmi.android.spot.SpotManager;
-import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Window;
-import android.view.WindowManager;
+import android.widget.Toast;
 
 public class SplashSpotActivity extends BaseActivity {
 
@@ -65,6 +58,10 @@ public class SplashSpotActivity extends BaseActivity {
 		 SpotManager.getInstance(this).showSplashSpotAds(this,
 				 WelcomeActivity.class);
 
+		 
+		 String ret = getIntent().getStringExtra("test");
+		 if(ret != null)
+			 Toast.makeText(this, ret, Toast.LENGTH_SHORT).show();
 	}
 
 	// 请务必加上词句，否则进入网页广告后无法进去原sdk
