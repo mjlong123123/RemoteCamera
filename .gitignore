@@ -6,3 +6,5 @@ gen/*
 bin/*
 obj/*
 .tags*
+obj/local/armeabi/libffmpeglib.so
+obj/local/armeabi/librtp-jni.so

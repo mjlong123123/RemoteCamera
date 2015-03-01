@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 import net.youmi.android.banner.AdSize;
 import net.youmi.android.banner.AdView;
 import net.youmi.android.banner.AdViewListener;
-
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -15,7 +15,8 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.DebugUtils;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.view.Display;
 import android.view.SurfaceHolder;
@@ -35,6 +36,7 @@ import com.example.remotecamera.R;
 public class ScreenActivity extends BaseActivity implements Callback {
 	private final static String TAG = "ScreenActivity";
 	private SurfaceView mSurfaceView;
+	WakeLock wl;
 	// 传输数据
 	private Rtp mRtp = null;
 	private final static int LOCAL_PORT = 40018;
@@ -51,7 +53,6 @@ public class ScreenActivity extends BaseActivity implements Callback {
 
 	private RelativeLayout mProgressLayout;
 	private TextView mIpInput;
-	
 
 	private LinearLayout mLinearLayoutAd;
 
@@ -105,6 +106,21 @@ public class ScreenActivity extends BaseActivity implements Callback {
 		super.onDestroy();
 	}
 
+	@Override
+	protected void onResume() {
+		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+		wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "my_wakelock");
+		wl.acquire();
+		super.onResume();
+	}
+
+	@Override
+	protected void onPause() {
+		wl.release();
+		wl = null;
+		super.onPause();
+	}
+
 	private void initView() {
 		mSurfaceView = (SurfaceView) findViewById(R.id.surfaceview);
 		mSurfaceView.getHolder().addCallback(this);
@@ -120,9 +136,9 @@ public class ScreenActivity extends BaseActivity implements Callback {
 		Display display = getWindowManager().getDefaultDisplay();
 		mScreenW = display.getWidth();
 		mScreenH = display.getHeight();
-		
+
 		mLinearLayoutAd = (LinearLayout) findViewById(R.id.ad_linearlayout);
-		
+
 		AdView adView = new AdView(this, AdSize.FIT_SCREEN);
 		mLinearLayoutAd.addView(adView);
 		adView.setAdListener(new AdViewListener() {
