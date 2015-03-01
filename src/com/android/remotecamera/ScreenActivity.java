@@ -37,6 +37,7 @@ public class ScreenActivity extends BaseActivity implements Callback {
 	private final static String TAG = "ScreenActivity";
 	private SurfaceView mSurfaceView;
 	WakeLock wl;
+	boolean isPause = false;
 	// 传输数据
 	private Rtp mRtp = null;
 	private final static int LOCAL_PORT = 40018;
@@ -108,6 +109,7 @@ public class ScreenActivity extends BaseActivity implements Callback {
 
 	@Override
 	protected void onResume() {
+		isPause = false;
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "my_wakelock");
 		wl.acquire();
@@ -116,6 +118,7 @@ public class ScreenActivity extends BaseActivity implements Callback {
 
 	@Override
 	protected void onPause() {
+		isPause = true;
 		wl.release();
 		wl = null;
 		super.onPause();
@@ -177,6 +180,8 @@ public class ScreenActivity extends BaseActivity implements Callback {
 
 			@Override
 			public void dataCallback(byte[] data, int size) {
+				if(isPause)
+					return;
 				if (data.length == 35 && data[0] == 35 && data[34] == 35) {
 					Log.e(TAG, "data bybe");
 					mHandler.sendEmptyMessage(SHOW_PROCESS);

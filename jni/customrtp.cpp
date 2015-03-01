@@ -139,19 +139,19 @@ void JavaRtp::callJavaCallBack(int returncode, char * buffer, int size)
 {
     jbyteArray bufret;
 		jint ret=0;
-        LOG_LOCAL("JavaRtp::callJavaCallBack() start 1");
+        LOG_LOCAL("JavaRtp::callJavaCallBack() start 1 size:%d",size);
         //ret = mJavaVM->AttachCurrentThread(&mEnv, NULL);
-        LOG_LOCAL("JavaRtp::callJavaCallBack() start 2 %x",mJavaVM);
+        LOG_LOCAL("JavaRtp::callJavaCallBack() start 2 %x",mEnv);
     
-    if(mEnv == NULL)
-    {
-        LOG_LOCAL("JavaRtp::callJavaCallBack() mEnv is null 3");
          if (mJavaVM->GetEnv((void**) &mEnv, JNI_VERSION_1_4) != JNI_OK)
         {
             LOG_LOCAL("JavaRtp::callJavaCallBack() mJavaVM->GetEnv error");
             jniThrowExceptionExt(mEnv, "java/lang/RuntimeException", "JavaRtp::callJavaCallBack get env error");
         }
-        // return;
+    if(mEnv == NULL)
+    {
+        LOG_LOCAL("JavaRtp::callJavaCallBack() mEnv is null 3");
+        return;
     }
 
         LOG_LOCAL("JavaRtp::callJavaCallBack() start");

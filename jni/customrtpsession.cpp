@@ -252,6 +252,8 @@ bool CustomRTPSession::addDataToBuffer(uint8_t * in, uint32_t size, uint8_t ** p
 				//clear old data.
             resetPlayloadBuffer();
             timestamp = tim;
+			if((position+size-1) <= 1000*10)
+			{
             memcpy(playload_buffer,in,4);
             playload_buffer[4] = (in[4] & 0xe0) | (in[5] & 0x1f);
             memcpy(playload_buffer+5,in+6,size-6);
@@ -263,6 +265,7 @@ bool CustomRTPSession::addDataToBuffer(uint8_t * in, uint32_t size, uint8_t ** p
 	            }
             }
             position = (size-1);
+			}
         }
         else if(((in[5] & 0xe0) == 0x40))//end
         {
@@ -272,6 +275,7 @@ bool CustomRTPSession::addDataToBuffer(uint8_t * in, uint32_t size, uint8_t ** p
        			__android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer data before position:%d",position);
       				 __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer data before size:%d",size);
 				}
+				if((position+size-6) <= 1000*10)
             {
                 memcpy(playload_buffer+position,in+6,size - 6);
 					if(DEBUG)
@@ -297,6 +301,7 @@ bool CustomRTPSession::addDataToBuffer(uint8_t * in, uint32_t size, uint8_t ** p
 	       			__android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer data before position:%d",position);
 	       			__android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "addDataToBuffer data before size:%d",size);
 					}
+					if((position+size-6) <= 1000*10)
 					{
                 memcpy(playload_buffer+position,in+6,size - 6);
 					if(DEBUG)
