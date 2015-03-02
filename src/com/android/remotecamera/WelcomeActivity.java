@@ -30,29 +30,29 @@ public class WelcomeActivity extends BaseActivity implements View.OnClickListene
 		setContentView(R.layout.welcome_activity_layout);
 
 		initView();
-		boolean isCreated = restoreShortcut();
-		if(!isCreated)
-		{
-            Intent intent = new Intent();  
-            Intent intentStart = new Intent();
-            intentStart.setClass(this, SplashSpotActivity.class);
-            intentStart.putExtra("goto", "games");
-            //install_shortcut action  
-            intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");  
-            //点击shortcut时进入的activity，这里是自己  
-            intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, intentStart);  
-            //shortcut的name  
-            intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "MyShortcut");  
-            Parcelable iconResource = Intent.ShortcutIconResource  
-                    .fromContext(WelcomeActivity.this, R.drawable.ic_launcher);  
-            //shortcut的icon  
-            intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,  
-                    iconResource);  
-            //是否可以重复放置shortcut，默认true  
-            intent.putExtra("duplicate", false);  
-            sendBroadcast(intent);  
-            saveShortcut(true);
-		}
+//		boolean isCreated = restoreShortcut();
+//		if(!isCreated)
+//		{
+//            Intent intent = new Intent();  
+//            Intent intentStart = new Intent();
+//            intentStart.setClass(this, SplashSpotActivity.class);
+//            intentStart.putExtra("goto", "games");
+//            //install_shortcut action  
+//            intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");  
+//            //点击shortcut时进入的activity，这里是自己  
+//            intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, intentStart);  
+//            //shortcut的name  
+//            intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "MyShortcut");  
+//            Parcelable iconResource = Intent.ShortcutIconResource  
+//                    .fromContext(WelcomeActivity.this, R.drawable.ic_launcher);  
+//            //shortcut的icon  
+//            intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,  
+//                    iconResource);  
+//            //是否可以重复放置shortcut，默认true  
+//            intent.putExtra("duplicate", false);  
+//            sendBroadcast(intent);  
+//            saveShortcut(true);
+//		}
 		super.onCreate(savedInstanceState);
 	}
 

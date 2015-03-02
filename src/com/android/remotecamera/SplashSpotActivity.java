@@ -19,8 +19,8 @@ public class SplashSpotActivity extends BaseActivity {
 		// 参数：appId, appSecret, 调试模式
 		// AdManager.getInstance(this).init("85aa56a59eac8b3d",
 		// "a14006f66f58d5d7", false);
-		AdManager.getInstance(this).init("3a2bb040361c1f9f",
-				"42c335bdf9b18d81", false);
+		AdManager.getInstance(this).init("75f2c67eeb8b2ba5",
+				"2a4b4ea5ea075ef3", false);
 
 		// 如果仅仅使用开屏，需要取消注释以下注释，如果使用了开屏和插屏，则不需要。
 		SpotManager.getInstance(this).loadSplashSpotAds();
