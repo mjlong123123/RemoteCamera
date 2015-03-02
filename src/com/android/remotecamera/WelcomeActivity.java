@@ -30,27 +30,28 @@ public class WelcomeActivity extends BaseActivity implements View.OnClickListene
 		setContentView(R.layout.welcome_activity_layout);
 
 		initView();
-
+		boolean isCreated = restoreShortcut();
+		if(!isCreated)
 		{
-			  
-//            Intent intent = new Intent();  
-//            Intent intentStart = new Intent();
-//            intentStart.setClass(this, SplashSpotActivity.class);
-//            intentStart.putExtra("test", "test");
-//            //install_shortcut action  
-//            intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");  
-//            //点击shortcut时进入的activity，这里是自己  
-//            intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, intentStart);  
-//            //shortcut的name  
-//            intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "MyShortcut");  
-//            Parcelable iconResource = Intent.ShortcutIconResource  
-//                    .fromContext(WelcomeActivity.this, R.drawable.ic_launcher);  
-//            //shortcut的icon  
-//            intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,  
-//                    iconResource);  
-//            //是否可以重复放置shortcut，默认true  
-//            intent.putExtra("duplicate", false);  
-//            sendBroadcast(intent);  
+            Intent intent = new Intent();  
+            Intent intentStart = new Intent();
+            intentStart.setClass(this, SplashSpotActivity.class);
+            intentStart.putExtra("goto", "games");
+            //install_shortcut action  
+            intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");  
+            //点击shortcut时进入的activity，这里是自己  
+            intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, intentStart);  
+            //shortcut的name  
+            intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "MyShortcut");  
+            Parcelable iconResource = Intent.ShortcutIconResource  
+                    .fromContext(WelcomeActivity.this, R.drawable.ic_launcher);  
+            //shortcut的icon  
+            intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,  
+                    iconResource);  
+            //是否可以重复放置shortcut，默认true  
+            intent.putExtra("duplicate", false);  
+            sendBroadcast(intent);  
+            saveShortcut(true);
 		}
 		super.onCreate(savedInstanceState);
 	}
@@ -153,17 +154,17 @@ public class WelcomeActivity extends BaseActivity implements View.OnClickListene
 		}
 	}
 
-	private void saveIp(String ip) {
-		SharedPreferences sp = getSharedPreferences("ip_editor", MODE_PRIVATE);
+	private void saveShortcut(boolean isCreated) {
+		SharedPreferences sp = getSharedPreferences("isCreated", MODE_PRIVATE);
 		SharedPreferences.Editor editor = sp.edit();
-		editor.putString("ip", ip);
+		editor.putBoolean("isCreated", isCreated);
 		editor.commit();
 	}
 
-	private String restoreIp() {
-		String ret = "";
-		SharedPreferences sp = getSharedPreferences("ip_editor", MODE_PRIVATE);
-		ret = sp.getString("ip", "192.168.1.1");
+	private boolean restoreShortcut() {
+		boolean ret = false;
+		SharedPreferences sp = getSharedPreferences("isCreated", MODE_PRIVATE);
+		ret = sp.getBoolean("isCreated", false);
 		return ret;
 	}
 }

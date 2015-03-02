@@ -13,5 +13,7 @@
     <string name="del_input">"DEL"</string>
     <string name="connect">"Connect"</string>
     <string name="ip_error">"Ip Error"</string>
+    
+    <string name="games">"Games"</string>
 
 </resources>
