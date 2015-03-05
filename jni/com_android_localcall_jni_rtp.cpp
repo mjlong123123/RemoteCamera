@@ -259,9 +259,9 @@ JNIEXPORT jint JNICALL Java_com_android_localcall_jni_Rtp_getFrameSize
 }
 
 
-JNIEXPORT void JNICALL Java_com_android_localcall_jni_Rtp_write___3BZ
+JNIEXPORT void JNICALL Java_com_android_localcall_jni_Rtp_write___3BZI
 
-(JNIEnv * env, jobject thiz, jbyteArray jar, jboolean isAll)
+(JNIEnv * env, jobject thiz, jbyteArray jar, jboolean isAll, jint inSize)
 {
     int index = 0;
     JavaRtp* jrtp;
@@ -283,12 +283,22 @@ JNIEXPORT void JNICALL Java_com_android_localcall_jni_Rtp_write___3BZ
     seesion = jrtp->getCustomRTPSession();
     if(seesion == NULL)
     {
-        LOG_LOCAL("openRtp seesion == NULL");
-        jniThrowException(env, "java/lang/RuntimeException", "closeRtp ERROR seesion == NULL");
+        LOG_LOCAL("write seesion == NULL");
+        jniThrowException(env, "java/lang/RuntimeException", "write seesion == NULL");
         return;
     }
 
    lenth=env->GetArrayLength(jar);
+   if(lenth < inSize)
+   {
+       LOG_LOCAL("write inSize error");
+       jniThrowException(env, "java/lang/RuntimeException", "write inSize error");
+       return;
+   }
+   else
+   {
+	   lenth = inSize;
+   }
 	buffer_in = env->GetByteArrayElements(jar, &iscopy);
 	if(DEBUG)
 	{
@@ -357,6 +367,7 @@ JNIEXPORT void JNICALL Java_com_android_localcall_jni_Rtp_write___3BZ
                 bufferout[4] = indicator;
                 bufferout[5] = header_start;
                 status = seesion->SendPacket((void *)bufferout,templenth,96,false,1800);
+                RTPTime::Wait(RTPTime(0,20));
             }
             else if(left == 0)//end
             {
@@ -369,6 +380,7 @@ JNIEXPORT void JNICALL Java_com_android_localcall_jni_Rtp_write___3BZ
                 bufferout[4] = indicator;
                 bufferout[5] = header;
                 status = seesion->SendPacket((void *)bufferout,templenth,96,false,1800);
+                RTPTime::Wait(RTPTime(0,20));
             }
         }
 	}

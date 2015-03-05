@@ -108,8 +108,8 @@ JNIEXPORT void JNICALL Java_com_android_localcall_jni_Rtp_write___3S
  * Method:    write
  * Signature: ([S)V
  */
-JNIEXPORT void JNICALL Java_com_android_localcall_jni_Rtp_write___3BZ
-  (JNIEnv *, jobject, jbyteArray, jboolean);
+JNIEXPORT void JNICALL Java_com_android_localcall_jni_Rtp_write___3BZI
+  (JNIEnv *, jobject, jbyteArray, jboolean, jint);
 
 /*
  * Class:     com_android_localcall_jni_Rtp

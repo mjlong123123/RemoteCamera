@@ -112,9 +112,9 @@ public class Rtp
 	 * @param data 数据
 	 */
 	public native void write(short [] data);
-	public native void write(byte [] data, boolean isAll);
-	public void write(byte [] data){
-		write(data,true);
+	public native void write(byte [] data, boolean isAll, int lenth);
+	public void write(byte [] data,int lenth){
+		write(data,true,lenth);
 	}
 	/**
 	 * 写数据，非阻塞状态。

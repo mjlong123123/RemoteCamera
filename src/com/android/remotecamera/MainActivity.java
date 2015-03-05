@@ -77,7 +77,16 @@ public class MainActivity extends BaseActivity implements Callback,
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		initView();
-
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		// 开启rtp传输
 		mRtp = new Rtp();
 		mRtp.openRtp(40018);

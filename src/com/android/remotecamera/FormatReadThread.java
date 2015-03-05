@@ -6,6 +6,7 @@ import java.io.InputStream;
 import android.util.Log;
 
 import com.android.localcall.jni.Rtp;
+import com.android.remotecamera.CustomObjectPool.Entity;
 
 /**
  * @author dragon 读取mediaRecorder 录制的视频流线程
@@ -30,12 +31,20 @@ public class FormatReadThread extends Thread {
 	 * 发送rtp数据使用
 	 */
 	private Rtp mRtp;
+	/**
+	 * 防止录制视频数据抖动问题
+	 */
+	private DataCacheThread mDataCacheThread;
 
 	/**
 	 * 数据的宽高
 	 */
 	private int mWidth = 0;
 	private int mHeight = 0;
+	/**
+	 * read data buffer
+	 */
+	private byte[] mBuffer = null;
 
 	/**
 	 * @param is
@@ -59,6 +68,10 @@ public class FormatReadThread extends Thread {
 
 	@Override
 	public void run() {
+		
+		mDataCacheThread = new DataCacheThread(mRtp);
+		mDataCacheThread.start();
+		
 		try {
 			byte buffertemp[] = new byte[4];
 			// Skip all atoms preceding mdat atom
@@ -76,64 +89,42 @@ public class FormatReadThread extends Thread {
 			Log.e(TAG, "Couldn't skip mp4 header");
 			return;
 		}
-
-		byte[] mBuffer = new byte[30];
-		mBuffer[29] = 1;
-		mBuffer[28] = 0;
-		mBuffer[27] = 1;
-		mBuffer[26] = 0;
-		mBuffer[25] = 1;
-		mBuffer[24] = 0;
-		
-
-		mBuffer[0] = (byte) (mWidth & 0xff);
-		mBuffer[1] = (byte) ((mWidth >> 8) & 0xff);
-		mBuffer[2] = (byte) ((mWidth >> 16) & 0xff);
-		mBuffer[3] = (byte) ((mWidth >> 24) & 0xff);
-
-		mBuffer[4] = (byte) (mHeight & 0xff);
-		mBuffer[5] = (byte) ((mHeight >> 8) & 0xff);
-		mBuffer[6] = (byte) ((mHeight >> 16) & 0xff);
-		mBuffer[7] = (byte) ((mHeight >> 24) & 0xff);
-
-		mRtp.write(mBuffer);
+		//send frame size
+		sendFrameSize();
+		sendSPS();
+		sendPPS();
 
 		byte[] h264header = { 0, 0, 0, 1 };
-
-		byte[] sendsps = new byte[mSPS.length + h264header.length];
-		System.arraycopy(h264header, 0, sendsps, 0, h264header.length);
-		System.arraycopy(mSPS, 0, sendsps, 0 + h264header.length, mSPS.length);
-		mRtp.write(sendsps);
-
-		byte[] sendpps = new byte[mPPS.length + h264header.length];
-		System.arraycopy(h264header, 0, sendpps, 0, h264header.length);
-		System.arraycopy(mPPS, 0, sendpps, 0 + h264header.length, mPPS.length);
-		mRtp.write(sendpps);
-
-		byte[] buffer = null;
 		byte[] lenthBuffer = new byte[5];
-		while (!Thread.interrupted()) {
-			try {
-				int h264length = readLenth(mInputStream, lenthBuffer);
-				if(Utils.DEBUG)
-					Log.e(TAG, "send type:"+lenthBuffer[4]);
-				buffer = new byte[h264length + h264header.length];
-				System.arraycopy(h264header, 0, buffer, 0, h264header.length);
-				System.arraycopy(lenthBuffer, 0 + 4, buffer, h264header.length,
-						1);
-				fill(mInputStream, buffer, h264header.length + 1,
-						h264length - 1);
-				mRtp.write(buffer);
-			} catch (IOException e) {
-				Log.e(TAG, "e:" + e);
-				break;
-			}
-		}
+		int h264length = 0;
+		Entity en = null;
 		
-		byte[] bybebuffer = new byte[35];
+		try {
+			while (!Thread.interrupted()) {
+
+				h264length = readLenth(mInputStream, lenthBuffer);
+				
+				en = mDataCacheThread.getEmptyEntity(h264length + h264header.length);
+				mBuffer = en.getBuffer();
+				
+				System.arraycopy(h264header, 0, mBuffer, 0, h264header.length);
+				System.arraycopy(lenthBuffer, 0 + 4, mBuffer,
+						h264header.length, 1);
+				fill(mInputStream, mBuffer, h264header.length + 1,
+						h264length - 1);
+				mDataCacheThread.add(en);
+			}
+		} catch (IOException e) {
+			Log.e(TAG, "e:" + e);
+		}
+
+		en = mDataCacheThread.getEmptyEntity(35);
+		
+		byte[] bybebuffer = en.getBuffer();
 		bybebuffer[0] = 35;
 		bybebuffer[34] = 35;
-		mRtp.write(bybebuffer);
+		mDataCacheThread.add(en);
+		
 		try {
 			mInputStream.close();
 		} catch (IOException e) {
@@ -236,5 +227,47 @@ public class FormatReadThread extends Thread {
 				sum += len;
 		}
 		return sum;
+	}
+	
+	private void sendSPS(){
+		byte[] h264header = { 0, 0, 0, 1 };
+		Entity en = mDataCacheThread.getEmptyEntity(mSPS.length + h264header.length);
+		byte[] sendsps = en.getBuffer();
+		System.arraycopy(h264header, 0, sendsps, 0, h264header.length);
+		System.arraycopy(mSPS, 0, sendsps, 0 + h264header.length, mSPS.length);
+		mDataCacheThread.add(en);
+	}
+	
+	private void sendPPS(){
+		byte[] h264header = { 0, 0, 0, 1 };
+		Entity en = mDataCacheThread.getEmptyEntity(mPPS.length + h264header.length);
+		byte[] sendpps = en.getBuffer();
+		System.arraycopy(h264header, 0, sendpps, 0, h264header.length);
+		System.arraycopy(mPPS, 0, sendpps, 0 + h264header.length, mPPS.length);
+		mDataCacheThread.add(en);
+	}
+	
+	private void sendFrameSize(){
+		Entity en = mDataCacheThread.getEmptyEntity(30);
+		
+		byte[] mBuffer = en.getBuffer();
+		mBuffer[29] = 1;
+		mBuffer[28] = 0;
+		mBuffer[27] = 1;
+		mBuffer[26] = 0;
+		mBuffer[25] = 1;
+		mBuffer[24] = 0;
+		
+
+		mBuffer[0] = (byte) (mWidth & 0xff);
+		mBuffer[1] = (byte) ((mWidth >> 8) & 0xff);
+		mBuffer[2] = (byte) ((mWidth >> 16) & 0xff);
+		mBuffer[3] = (byte) ((mWidth >> 24) & 0xff);
+
+		mBuffer[4] = (byte) (mHeight & 0xff);
+		mBuffer[5] = (byte) ((mHeight >> 8) & 0xff);
+		mBuffer[6] = (byte) ((mHeight >> 16) & 0xff);
+		mBuffer[7] = (byte) ((mHeight >> 24) & 0xff);
+		mDataCacheThread.add(en);
 	}
 }
