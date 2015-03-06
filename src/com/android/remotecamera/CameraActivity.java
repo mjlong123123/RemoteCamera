@@ -28,37 +28,30 @@ public class CameraActivity extends BaseActivity implements Callback {
 	private SurfaceView mSurfaceView;
 	// 支持socket传输的MediaRecorder
 	private CustomMediaRecorder mCustomMediaRecorder = null;
-	// 传输数据
-	private Rtp mRtp = null;
 
 	private Camera mCamera = null;
 
 	private LinearLayout mLinearLayoutAd;
 	
+	private String mIP;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.camera_activity_layout);
-		// 开启rtp传输
-		mRtp = new Rtp();
-		mRtp.openRtp(40018);
 		Intent intent = getIntent();
 		if (intent == null) {
 			finish();
 		}
-		String ip = intent.getStringExtra("IP");
-		if (ip == null || ip.equals("")) {
+		mIP = intent.getStringExtra("IP");
+		if (mIP == null || mIP.equals("")) {
 			finish();
 		}
-		mRtp.addRtpDestinationIp(ip);
 		initView();
 		super.onCreate(savedInstanceState);
 	}
 
 	@Override
 	protected void onDestroy() {
-		mRtp.closeRtp();
-		mRtp.native_rease();
-		mRtp = null;
 		super.onDestroy();
 	}
 
@@ -106,10 +99,6 @@ public class CameraActivity extends BaseActivity implements Callback {
 			mCustomMediaRecorder.stopRecorder();
 			mCustomMediaRecorder = null;
 		}
-
-//		CamcorderProfile cp = CamcorderProfile
-//				.get(CamcorderProfile.QUALITY_QVGA);
-
 		mCamera = Camera.open();
 
 //		List<Size> list = mCamera.getParameters().getSupportedVideoSizes();
@@ -124,7 +113,7 @@ public class CameraActivity extends BaseActivity implements Callback {
 		mPreviewHeight = 240;
 
 		mCamera.setDisplayOrientation(90);
-		mCustomMediaRecorder = new CustomMediaRecorder(mRtp);
+		mCustomMediaRecorder = new CustomMediaRecorder(mIP);
 		mCustomMediaRecorder.startRecorder(mCamera, mSurfaceView,
 				new VideoInfor(6000, 10, mPreviewWidth, mPreviewHeight));
 		mSurfaceW = mScreenW;

@@ -263,7 +263,7 @@ public class MainActivity extends BaseActivity implements Callback,
 
 					mRtp.addRtpDestinationIp(ip);
 
-					mCustomMediaRecorder = new CustomMediaRecorder(mRtp);
+					mCustomMediaRecorder = new CustomMediaRecorder(ip);
 					mCustomMediaRecorder.startRecorder(mCamera,
 							mPreviewSurface, new VideoInfor(6000, 20,
 									mPreviewWidth, mPreviewHeight));

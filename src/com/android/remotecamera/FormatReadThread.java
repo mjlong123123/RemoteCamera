@@ -45,6 +45,8 @@ public class FormatReadThread extends Thread {
 	 * read data buffer
 	 */
 	private byte[] mBuffer = null;
+	
+	private String mIP;
 
 	/**
 	 * @param is
@@ -66,10 +68,20 @@ public class FormatReadThread extends Thread {
 		mHeight = h;
 	}
 
+	public FormatReadThread(InputStream is, byte[] sps, byte[] pps, String ip,
+			int w, int h) {
+		super("FormatReadThread");
+		mInputStream = is;
+		mSPS = sps;
+		mPPS = pps;
+		mIP = ip;
+		mWidth = w;
+		mHeight = h;
+	}
 	@Override
 	public void run() {
 		
-		mDataCacheThread = new DataCacheThread(mRtp);
+		mDataCacheThread = new DataCacheThread(mIP);
 		mDataCacheThread.start();
 		
 		try {
@@ -93,7 +105,7 @@ public class FormatReadThread extends Thread {
 		sendFrameSize();
 		sendSPS();
 		sendPPS();
-
+		long lastsendtime = System.currentTimeMillis();
 		byte[] h264header = { 0, 0, 0, 1 };
 		byte[] lenthBuffer = new byte[5];
 		int h264length = 0;
@@ -113,6 +125,13 @@ public class FormatReadThread extends Thread {
 				fill(mInputStream, mBuffer, h264header.length + 1,
 						h264length - 1);
 				mDataCacheThread.add(en);
+				
+				if((System.currentTimeMillis() - lastsendtime) > 3000){
+					sendFrameSize();
+					sendSPS();
+					sendPPS();
+					lastsendtime = System.currentTimeMillis();
+				}
 			}
 		} catch (IOException e) {
 			Log.e(TAG, "e:" + e);

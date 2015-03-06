@@ -10,8 +10,8 @@ import com.android.remotecamera.CustomObjectPool.Entity;
 public class DataCacheThread extends Thread {
 	private static final String TAG = "DataCacheThread";
 
-//	private CustomObjectPool mCustomObjectPool = new CustomObjectPool(
-//			1 * 1000 * 1000);
+	private CustomObjectPool mCustomObjectPool = new CustomObjectPool(
+			1 * 1000 * 1000);
 
 	private LinkedBlockingQueue<Entity> mLinkedBuffer = new LinkedBlockingQueue<Entity>(50);
 
@@ -24,17 +24,24 @@ public class DataCacheThread extends Thread {
 	private long mLastTime = 0;
 	
 	private Object mLock = new Object();
+	
+	private String mIP;
 
-	public DataCacheThread(Rtp rtp) {
+	public DataCacheThread(String ip) {
 		super(TAG);
-		mRtp = rtp;
+		mIP = ip;
 	}
-
+	
 	@Override
 	public void run() {
 		Entity en = null;
 		long oldtime = System.currentTimeMillis();
 		long taketime = System.currentTimeMillis();
+		
+		mRtp = new Rtp();
+		mRtp.openRtp(40018);
+		mRtp.addRtpDestinationIp(mIP);
+		
 		try {
 			while (!interrupted()) {
 
@@ -52,7 +59,7 @@ public class DataCacheThread extends Thread {
 					if(en.getBuffer()[34] == 35 && en.getBuffer()[0] == 35)
 						break;
 				}
-//				mCustomObjectPool.returnBuf(en);
+				mCustomObjectPool.returnBuf(en);
 				synchronized (mLock) {
 					if (Utils.DEBUG) {
 						Log.e(TAG, "run wait start");
@@ -74,6 +81,11 @@ public class DataCacheThread extends Thread {
 			}
 		}
 
+
+		mRtp.closeRtp();
+		mRtp.native_rease();
+		mRtp = null;
+		
 		if (Utils.DEBUG) {
 			Log.e(TAG, "run over");
 		}
@@ -137,9 +149,7 @@ public class DataCacheThread extends Thread {
 		
 		mLastTime = currentTime;
 		
-//		Entity en = (Entity) mCustomObjectPool.getBuf(len);
-
-		Entity en = new Entity(len);
+		Entity en = (Entity) mCustomObjectPool.getBuf(len);
 		
 		en.setSleepTime(sta.average() / 1000000);
 

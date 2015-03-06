@@ -77,15 +77,11 @@ public class CustomMediaRecorder {
 	 */
 	private FormatReadThread mFormatReadThread = null;
 
-	/**
-	 * 发送rtp数据用
-	 */
-	private Rtp mRtp;
+	private String mIP;
 
-	public CustomMediaRecorder(Rtp rtp) {
-		mRtp = rtp;
+	public CustomMediaRecorder(String ip) {
+		mIP = ip;
 	}
-
 	/**
 	 * 开始录制
 	 * 
@@ -169,7 +165,6 @@ public class CustomMediaRecorder {
 		mMediaRecorder.setVideoSize(mVideoInfor.getW(), mVideoInfor.getH());
 		
 		mMediaRecorder.setVideoFrameRate(mVideoInfor.getVideoFrameRate());
-//		mMediaRecorder.setVideoEncodingBitRate(4000000);
 		if (isTest) {
 			if (TESTFILE.exists())
 				TESTFILE.delete();
@@ -246,7 +241,7 @@ public class CustomMediaRecorder {
 
 		mFormatReadThread = new FormatReadThread(
 				new ParcelFileDescriptor.AutoCloseInputStream(fdPair[0]), mSPS,
-				mPPS, mRtp, mVideoInfor.getW(), mVideoInfor.getH());
+				mPPS, mIP, mVideoInfor.getW(), mVideoInfor.getH());
 		mFormatReadThread.start();
 	}
 

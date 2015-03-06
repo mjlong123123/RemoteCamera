@@ -49,15 +49,15 @@ public class CustomObjectPool {
 	}
 
 	public synchronized Entity getBuf(int len) {
-		for (int i = 0; i < mBuffersBySize.size(); i++) {
-			Entity buf = mBuffersBySize.get(i);
-			if (buf.size() >= len) {
-				mCurrentSize -= buf.size();
-				mBuffersBySize.remove(i);
-				mBuffersByLastUse.remove(buf);
-				return buf;
-			}
-		}
+//		for (int i = 0; i < mBuffersBySize.size(); i++) {
+//			Entity buf = mBuffersBySize.get(i);
+//			if (buf.size() >= len) {
+//				mCurrentSize -= buf.size();
+//				mBuffersBySize.remove(i);
+//				mBuffersByLastUse.remove(buf);
+//				return buf;
+//			}
+//		}
 		return new Entity(len);
 	}
 
@@ -69,17 +69,17 @@ public class CustomObjectPool {
 	 *            the buffer to return to the pool.
 	 */
 	public synchronized void returnBuf(Entity buf) {
-		if (buf == null || buf.size() > mSizeLimit) {
-			return;
-		}
-		mBuffersByLastUse.add(buf);
-		int pos = Collections.binarySearch(mBuffersBySize, buf, BUF_COMPARATOR);
-		if (pos < 0) {
-			pos = -pos - 1;
-		}
-		mBuffersBySize.add(pos, buf);
-		mCurrentSize += buf.size();
-		trim();
+//		if (buf == null || buf.size() > mSizeLimit) {
+//			return;
+//		}
+//		mBuffersByLastUse.add(buf);
+//		int pos = Collections.binarySearch(mBuffersBySize, buf, BUF_COMPARATOR);
+//		if (pos < 0) {
+//			pos = -pos - 1;
+//		}
+//		mBuffersBySize.add(pos, buf);
+//		mCurrentSize += buf.size();
+//		trim();
 	}
 
 	/**
