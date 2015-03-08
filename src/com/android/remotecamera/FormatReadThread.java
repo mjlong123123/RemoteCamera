@@ -126,12 +126,12 @@ public class FormatReadThread extends Thread {
 						h264length - 1);
 				mDataCacheThread.add(en);
 				
-				if((System.currentTimeMillis() - lastsendtime) > 3000){
-					sendFrameSize();
-					sendSPS();
-					sendPPS();
-					lastsendtime = System.currentTimeMillis();
-				}
+//				if((System.currentTimeMillis() - lastsendtime) > 3000){
+//					sendFrameSize();
+//					sendSPS();
+//					sendPPS();
+//					lastsendtime = System.currentTimeMillis();
+//				}
 			}
 		} catch (IOException e) {
 			Log.e(TAG, "e:" + e);

@@ -3,9 +3,12 @@ package com.android.remotecamera;
 import net.youmi.android.banner.AdSize;
 import net.youmi.android.banner.AdView;
 import net.youmi.android.banner.AdViewListener;
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.view.Display;
 import android.view.SurfaceHolder;
@@ -34,6 +37,8 @@ public class CameraActivity extends BaseActivity implements Callback {
 	private LinearLayout mLinearLayoutAd;
 	
 	private String mIP;
+
+	private WakeLock wl;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +59,19 @@ public class CameraActivity extends BaseActivity implements Callback {
 	protected void onDestroy() {
 		super.onDestroy();
 	}
-
+@Override
+protected void onResume() {
+	PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+	wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "my_wakelock");
+	wl.acquire();
+	super.onResume();
+}
+@Override
+protected void onPause() {
+	wl.release();
+	wl = null;
+	super.onPause();
+}
 	private void initView() {
 		mSurfaceView = (SurfaceView) findViewById(R.id.surfaceview_preview);
 		mSurfaceView.getHolder().addCallback(this);
@@ -115,7 +132,7 @@ public class CameraActivity extends BaseActivity implements Callback {
 		mCamera.setDisplayOrientation(90);
 		mCustomMediaRecorder = new CustomMediaRecorder(mIP);
 		mCustomMediaRecorder.startRecorder(mCamera, mSurfaceView,
-				new VideoInfor(6000, 10, mPreviewWidth, mPreviewHeight));
+				new VideoInfor(6000, 20, mPreviewWidth, mPreviewHeight));
 		mSurfaceW = mScreenW;
 		mSurfaceH = (int) (mScreenW * (1.0f * mPreviewWidth / mPreviewHeight));
 		if (mSurfaceH > mScreenH) {

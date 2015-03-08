@@ -367,7 +367,7 @@ JNIEXPORT void JNICALL Java_com_android_localcall_jni_Rtp_write___3BZI
                 bufferout[4] = indicator;
                 bufferout[5] = header_start;
                 status = seesion->SendPacket((void *)bufferout,templenth,96,false,1800);
-                RTPTime::Wait(RTPTime(0,20));
+                RTPTime::Wait(RTPTime(0.001));
             }
             else if(left == 0)//end
             {
@@ -380,7 +380,7 @@ JNIEXPORT void JNICALL Java_com_android_localcall_jni_Rtp_write___3BZI
                 bufferout[4] = indicator;
                 bufferout[5] = header;
                 status = seesion->SendPacket((void *)bufferout,templenth,96,false,1800);
-                RTPTime::Wait(RTPTime(0,20));
+                RTPTime::Wait(RTPTime(0.001));
             }
         }
 	}

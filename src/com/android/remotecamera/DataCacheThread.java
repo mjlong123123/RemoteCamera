@@ -10,8 +10,8 @@ import com.android.remotecamera.CustomObjectPool.Entity;
 public class DataCacheThread extends Thread {
 	private static final String TAG = "DataCacheThread";
 
-	private CustomObjectPool mCustomObjectPool = new CustomObjectPool(
-			1 * 1000 * 1000);
+//	private CustomObjectPool mCustomObjectPool = new CustomObjectPool(
+//			1 * 1000 * 1000);
 
 	private LinkedBlockingQueue<Entity> mLinkedBuffer = new LinkedBlockingQueue<Entity>(50);
 
@@ -52,14 +52,20 @@ public class DataCacheThread extends Thread {
 				taketime = System.currentTimeMillis();
 				en = mLinkedBuffer.take();
 				if (Utils.DEBUG) {
-					Log.e(TAG, "run take time:"+(System.currentTimeMillis() - taketime));
+					Log.e(TAG, "run take time1:"+(System.currentTimeMillis() - taketime));
+					taketime = System.currentTimeMillis();
 				}
 				mRtp.write(en.getBuffer(), en.size());
 				if(en.size() == 35){
 					if(en.getBuffer()[34] == 35 && en.getBuffer()[0] == 35)
 						break;
 				}
-				mCustomObjectPool.returnBuf(en);
+
+				if (Utils.DEBUG) {
+					Log.e(TAG, "run take time2:"+(System.currentTimeMillis() - taketime));
+					taketime = System.currentTimeMillis();
+				}
+//				mCustomObjectPool.returnBuf(en);
 				synchronized (mLock) {
 					if (Utils.DEBUG) {
 						Log.e(TAG, "run wait start");
@@ -68,6 +74,11 @@ public class DataCacheThread extends Thread {
 					if (Utils.DEBUG) {
 						Log.e(TAG, "run wait end");
 					}
+				}
+
+				if (Utils.DEBUG) {
+					Log.e(TAG, "run take time3:"+(System.currentTimeMillis() - taketime));
+					taketime = System.currentTimeMillis();
 				}
 			}
 		} catch (InterruptedException e) {
@@ -149,7 +160,8 @@ public class DataCacheThread extends Thread {
 		
 		mLastTime = currentTime;
 		
-		Entity en = (Entity) mCustomObjectPool.getBuf(len);
+//		Entity en = (Entity) mCustomObjectPool.getBuf(len);
+		Entity en =  new Entity(len);
 		
 		en.setSleepTime(sta.average() / 1000000);
 

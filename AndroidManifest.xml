@@ -36,7 +36,7 @@
         android:theme="@style/AppTheme" >
         <meta-data
             android:name="YOUMI_CHANNEL"
-            android:value="10000" >
+            android:value="10020" >
         </meta-data>
         <!-- 百度统计数据 -->
         <!-- 您从百度网站获取的APP KEY -->
