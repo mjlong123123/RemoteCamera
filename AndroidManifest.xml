@@ -34,10 +34,6 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <meta-data
-            android:name="YOUMI_CHANNEL"
-            android:value="10020" >
-        </meta-data>
         <!-- 百度统计数据 -->
         <!-- 您从百度网站获取的APP KEY -->
         <meta-data
@@ -81,7 +77,7 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
-        <activity
+        <!-- <activity
             android:name="com.android.remotecamera.SplashSpotActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -91,19 +87,18 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity> -->
         <activity
             android:name="com.android.remotecamera.WelcomeActivity"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" >
 
-            <!--
+            
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            -->
+            </intent-filter>
         </activity>
         <activity
             android:name="com.android.remotecamera.ScreenActivity"

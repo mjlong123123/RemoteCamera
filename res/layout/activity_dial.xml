@@ -205,13 +205,13 @@
         android:paddingTop="@dimen/dial_padding_top"
         android:text="@string/connect"
         android:textSize="@dimen/dial_font_size" 
-        android:layout_above="@+id/ad_linearlayout"/>
+        android:layout_alignParentBottom="true"/>
 
-    <LinearLayout
+  <!--   <LinearLayout
         android:id="@+id/ad_linearlayout"
         android:layout_width="match_parent"
         android:layout_height="50dip"
         android:background="#ffffff" 
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal"/>
+        android:orientation="horizontal"/> -->
 </RelativeLayout>

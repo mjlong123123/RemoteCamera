@@ -34,11 +34,11 @@
             android:textSize="20dip" />
     </RelativeLayout>
 
-    <LinearLayout
+  <!--   <LinearLayout
         android:id="@+id/ad_linearlayout"
         android:layout_width="match_parent"
         android:layout_height="50dip"
         android:background="#ffffff" 
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal"/>
+        android:orientation="horizontal"/> -->
 </RelativeLayout>

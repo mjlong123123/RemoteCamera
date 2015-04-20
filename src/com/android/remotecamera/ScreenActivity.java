@@ -4,9 +4,6 @@ import h264.com.VView;
 
 import java.nio.ByteBuffer;
 
-import net.youmi.android.banner.AdSize;
-import net.youmi.android.banner.AdView;
-import net.youmi.android.banner.AdViewListener;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -55,7 +52,6 @@ public class ScreenActivity extends BaseActivity implements Callback {
 	private RelativeLayout mProgressLayout;
 	private TextView mIpInput;
 
-	private LinearLayout mLinearLayoutAd;
 
 	private int mScreenW = 0;
 	private int mScreenH = 0;
@@ -140,28 +136,7 @@ public class ScreenActivity extends BaseActivity implements Callback {
 		mScreenW = display.getWidth();
 		mScreenH = display.getHeight();
 
-		mLinearLayoutAd = (LinearLayout) findViewById(R.id.ad_linearlayout);
 
-		AdView adView = new AdView(this, AdSize.FIT_SCREEN);
-		mLinearLayoutAd.addView(adView);
-		adView.setAdListener(new AdViewListener() {
-
-			@Override
-			public void onSwitchedAd(AdView arg0) {
-				Log.i("YoumiAdDemo", "广告条切换");
-			}
-
-			@Override
-			public void onReceivedAd(AdView arg0) {
-				Log.i("YoumiAdDemo", "请求广告成功");
-
-			}
-
-			@Override
-			public void onFailedToReceivedAd(AdView arg0) {
-				Log.i("YoumiAdDemo", "请求广告失败");
-			}
-		});
 	}
 
 	@Override

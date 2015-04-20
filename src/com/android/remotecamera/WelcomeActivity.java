@@ -1,14 +1,9 @@
 package com.android.remotecamera;
 
-import net.youmi.android.banner.AdSize;
-import net.youmi.android.banner.AdView;
-import net.youmi.android.banner.AdViewListener;
-import net.youmi.android.spot.SpotManager;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -20,7 +15,6 @@ import com.example.remotecamera.R;
 public class WelcomeActivity extends BaseActivity implements View.OnClickListener {
 	private TextView mOpenCamera;
 	private TextView mOpenScreen;
-	private LinearLayout mLinearLayoutAd;
 	private AlertDialog mDialogInputIp;
 	private EditText mEditInputIp;
 
@@ -61,38 +55,15 @@ public class WelcomeActivity extends BaseActivity implements View.OnClickListene
 		mOpenScreen = (TextView) findViewById(R.id.open_screen);
 		mOpenCamera.setOnClickListener(this);
 		mOpenScreen.setOnClickListener(this);
-		mLinearLayoutAd = (LinearLayout) findViewById(R.id.ad_linearlayout);
-		AdView adView = new AdView(this, AdSize.FIT_SCREEN);
-		mLinearLayoutAd.addView(adView);
-		adView.setAdListener(new AdViewListener() {
-
-			@Override
-			public void onSwitchedAd(AdView arg0) {
-				Log.i("YoumiAdDemo", "广告条切换");
-			}
-
-			@Override
-			public void onReceivedAd(AdView arg0) {
-				Log.i("YoumiAdDemo", "请求广告成功");
-
-			}
-
-			@Override
-			public void onFailedToReceivedAd(AdView arg0) {
-				Log.i("YoumiAdDemo", "请求广告失败");
-			}
-		});
 	}
 
 	@Override
 	protected void onDestroy() {
-		SpotManager.getInstance(this).onDestroy();
 		super.onDestroy();
 	}
 
 	@Override
 	protected void onStop() {
-		SpotManager.getInstance(this).onStop();
 		super.onStop();
 	}
 
